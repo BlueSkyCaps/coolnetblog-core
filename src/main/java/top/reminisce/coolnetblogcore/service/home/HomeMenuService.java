@@ -1,6 +1,5 @@
 package top.reminisce.coolnetblogcore.service.home;
 
-import top.reminisce.coolnetblogcore.pojo.ao.TreeMenu;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.service.BaseService;
 
@@ -13,6 +12,6 @@ import java.util.List;
  */
 public interface HomeMenuService extends BaseService {
     List<CoreMenu> getAllMenus();
-    List<TreeMenu> getMenusToTree();
+    List<CoreMenu> getMenusToTree();
     CoreMenu getMenuById(@NotNull Integer id);
 }
