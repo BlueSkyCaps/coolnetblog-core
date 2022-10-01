@@ -1,4 +1,4 @@
-package top.reminisce.coolnetblogcore.controller.base;
+package top.reminisce.coolnetblogcore.controller;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

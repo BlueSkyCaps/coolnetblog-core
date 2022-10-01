@@ -2,6 +2,9 @@ package top.reminisce.coolnetblogcore.pojo.vo;
 
 import top.reminisce.coolnetblogcore.common.ResultStatus;
 
+/**
+ * @author BlueSkyCarry
+ */
 public class Result {
     private String message;
 

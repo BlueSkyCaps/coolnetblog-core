@@ -1,8 +1,21 @@
 package top.reminisce.coolnetblogcore.common;
 
+/**
+ * @author BlueSkyCarry
+ */
+
 public enum ResultStatus {
+    /**
+     * 失败
+     */
     FAIL(0),
+    /**
+     * 成功
+     */
     SUCCESS(1),
+    /**
+     * 其余
+     */
     OTHER(2);
 
     private final int value;
