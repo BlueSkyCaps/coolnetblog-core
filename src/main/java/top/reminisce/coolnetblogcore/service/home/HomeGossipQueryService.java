@@ -11,7 +11,7 @@ import java.util.List;
  * @author BlueSky
  * @date 2022/10/1
  */
-public interface HomeGossipService extends BaseService {
+public interface HomeGossipQueryService extends BaseService {
     List<CoreGossip> getAllGossip();
     List<CoreGossip> getGossipBySlide(@NotNull Integer index,  @Value("10") Integer count);
     CoreGossip getGossipById(@NotNull Integer id);

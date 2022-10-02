@@ -3,7 +3,8 @@ package top.reminisce.coolnetblogcore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import top.reminisce.coolnetblogcore.pojo.ao.Tree;
+import org.springframework.context.ApplicationContext;
+import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.service.home.HomeService;
 
@@ -45,5 +46,16 @@ class CoolNetBlogCoreApplicationTests {
     void customExceptionTest() {
         Object data = homeService.dealGlobalEachNeedData();
         System.out.println(data);
+    }
+
+    @Autowired
+    private GlobalEachNeedData data;
+    @Autowired
+    private ApplicationContext context;
+    @Test
+    void SCOPE_PROTOTYPETest() {
+        System.out.println(data);
+        System.out.println(context.getBean(GlobalEachNeedData.class));
+
     }
 }

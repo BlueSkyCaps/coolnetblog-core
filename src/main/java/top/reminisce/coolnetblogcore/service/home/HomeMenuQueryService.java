@@ -10,7 +10,7 @@ import java.util.List;
  * @author BlueSky
  * @date 2022/10/1
  */
-public interface HomeMenuService extends BaseService {
+public interface HomeMenuQueryService extends BaseService {
     List<CoreMenu> getAllMenus();
     List<CoreMenu> getMenusToTree();
     CoreMenu getMenuById(@NotNull Integer id);

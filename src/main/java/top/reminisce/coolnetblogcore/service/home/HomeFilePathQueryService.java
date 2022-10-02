@@ -10,7 +10,7 @@ import java.util.List;
  * @author BlueSky
  * @date 2022/10/1
  */
-public interface HomeFilePathService extends BaseService {
+public interface HomeFilePathQueryService extends BaseService {
     List<CoreFilePath> getAllFilePath();
     CoreFilePath getFilePathById(@NotNull Integer id);
 }

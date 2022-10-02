@@ -10,7 +10,7 @@ import java.util.List;
  * @author BlueSky
  * @date 2022/10/1
  */
-public interface HomeLoveLookService extends BaseService {
+public interface HomeLoveLookQueryService extends BaseService {
     List<CoreLoveLook> getAllLoveLook();
     CoreLoveLook getLoveLookById(@NotNull Integer id);
 }

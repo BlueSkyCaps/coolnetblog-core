@@ -1,16 +1,23 @@
 package top.reminisce.coolnetblogcore.service.home.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
-import top.reminisce.coolnetblogcore.pojo.po.sql.CoreFilePath;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreLoveLook;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.repository.mongo.SysAdminRepository;
+import top.reminisce.coolnetblogcore.repository.sql.ArticleMapper;
+import top.reminisce.coolnetblogcore.repository.sql.GossipMapper;
+import top.reminisce.coolnetblogcore.repository.sql.LoveLookMapper;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
 import top.reminisce.coolnetblogcore.service.home.HomeService;
+import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeQuery;
+import top.reminisce.coolnetblogcore.util.ValidationUtils;
 import top.reminisce.coolnetblogcore.util.bean.SpringBeanUtils;
 
 import java.util.List;
@@ -23,11 +30,19 @@ import static top.reminisce.coolnetblogcore.util.StructureUtils.toTree;
  * @date 2022/10/1
  */
 @Service
-public class HomeServiceImpl implements HomeService {
+public class HomeServiceImpl extends AbstractHomeQuery implements HomeService {
     /**
      * 菜单数据访问层
      */
     private final MenuMapper menuMapper;
+    /**
+     * "看看这些"小组件数据访问层
+     */
+    private final LoveLookMapper loveLookMapper;
+    /**
+     * "闲言碎语"小组件数据访问层
+     */
+    private final GossipMapper gossipMapper;
     /**
      * SysAdmin数据访问层
      */
@@ -41,36 +56,42 @@ public class HomeServiceImpl implements HomeService {
      */
     private final GlobalEachNeedData globalEachNeedData;
 
-    public HomeServiceImpl(MenuMapper menuMapper, SysAdminRepository adminRepository, SpringBeanUtils beanUtils, GlobalEachNeedData globalEachNeedData) {
+    /**
+     * 文章数据访问层
+     */
+
+    public HomeServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper,
+                           GossipMapper gossipMapper, SysAdminRepository adminRepository,
+                           SpringBeanUtils beanUtils, GlobalEachNeedData globalEachNeedData) {
         this.menuMapper = menuMapper;
+        this.loveLookMapper = loveLookMapper;
+        this.gossipMapper = gossipMapper;
         this.adminRepository = adminRepository;
         this.beanUtils = beanUtils;
         this.globalEachNeedData = globalEachNeedData;
     }
 
-    @Override
     public Object dealGlobalEachNeedData() {
         // 获取菜单
         List<CoreMenu> treeMenus = getMenusToTree();
         // 获取站点配置
         CoreSysAdmin coreSysAdmin = adminRepository.getOneExcludeSecurity(beanUtils.getMongoTemplate());
         /* 小组件 */
-        // "看看这些"小组件
+        if (coreSysAdmin.getSiteSetting().isShowLoveLook()){
+            // 获取"看看这些"小组件
+            List<CoreLoveLook> allLoveLook = getAllLoveLook();
+            globalEachNeedData.setLoveLook(allLoveLook);
+        }
+        if (coreSysAdmin.getSiteSetting().isShowGossip()){
+            // 获取"闲言碎语"小组件 初始化第一页，十条
+            List<CoreGossip> gossipsFromInitPage = getGossipBySlide(1, 10);
+            globalEachNeedData.setGossip(gossipsFromInitPage);
+        }
         globalEachNeedData.setMenu(treeMenus);
         globalEachNeedData.setSysAdmin(coreSysAdmin);
         return globalEachNeedData;
     }
 
-
-    @Override
-    public List<CoreFilePath> getAllFilePath() {
-        return null;
-    }
-
-    @Override
-    public CoreFilePath getFilePathById(Integer id) {
-        return null;
-    }
 
     @Override
     public List<CoreGossip> getAllGossip() {
@@ -79,7 +100,10 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public List<CoreGossip> getGossipBySlide(Integer index, Integer count) {
-        return null;
+        ValidationUtils.pagePramsCheck(index, count);
+        IPage<CoreGossip> page = new Page<>(index, count);
+        Wrapper<CoreGossip> qw = new LambdaQueryWrapper<CoreGossip>().orderByDesc(CoreGossip::getAddTime);
+        return this.gossipMapper.selectPage(page, qw).getRecords();
     }
 
     @Override
@@ -89,7 +113,8 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public List<CoreLoveLook> getAllLoveLook() {
-        return null;
+        return this.loveLookMapper.selectList(new LambdaQueryWrapper<CoreLoveLook>()
+            .orderByDesc(CoreLoveLook::getAddTime));
     }
 
     @Override
@@ -121,4 +146,5 @@ public class HomeServiceImpl implements HomeService {
     public CoreMenu getMenuById(Integer id) {
         return null;
     }
+
 }

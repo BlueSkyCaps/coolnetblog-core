@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.util.Date;
 
+/**
+ * @author BlueSkyCarry
+ */
 @Getter
 @Setter
 @NoArgsConstructor

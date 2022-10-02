@@ -1,14 +1,10 @@
 package top.reminisce.coolnetblogcore.service.admin;
 
-import top.reminisce.coolnetblogcore.pojo.po.sql.CoreFieldMap;
-import top.reminisce.coolnetblogcore.service.BaseService;
-import top.reminisce.coolnetblogcore.service.home.HomeFieldMapService;
-
-import java.util.List;
+import top.reminisce.coolnetblogcore.service.home.HomeFieldMapQueryService;
 
 /**
  * @author BlueSky
  * @date 2022/10/1
  */
-public interface FieldMapService extends HomeFieldMapService {
+public interface FieldMapService extends HomeFieldMapQueryService {
 }

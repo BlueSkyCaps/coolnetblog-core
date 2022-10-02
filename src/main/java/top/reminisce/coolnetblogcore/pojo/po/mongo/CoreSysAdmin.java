@@ -1,9 +1,11 @@
 package top.reminisce.coolnetblogcore.pojo.po.mongo;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.stereotype.Repository;
+import top.reminisce.coolnetblogcore.pojo.ao.AdminDetail;
+import top.reminisce.coolnetblogcore.pojo.ao.SiteSetting;
 
 import java.io.Serializable;
 
@@ -12,6 +14,8 @@ import java.io.Serializable;
  * @date 2022/10/2
  */
 @Document(collection  = "core_sys_admin")
+@Getter
+@Setter
 public class CoreSysAdmin implements Serializable {
     @Id
     private String id;
@@ -21,32 +25,4 @@ public class CoreSysAdmin implements Serializable {
     private AdminDetail adminDetail;
     private SiteSetting siteSetting;
 }
-class AdminDetail {
-    private String email;
-    private String emailPassword;
-    private String smtpHost;
-    private int smtpPort;
-    private boolean smtpIsUseSsl;
-}
-class SiteSetting{
-    private String siteName;
-    private String host;
-    private String domain;
-    private String fashionQuotes;
-    private boolean isShowSiteName;
-    private boolean isShowEdgeSearch;
-    private boolean isShowLoveLook;
-    private boolean isShowQutoes;
-    private String cban;
-    private String tailContent;
-    private String onePageCount;
-    private String loginUriValue;
-    private String loveLookTitle;
-    private String wishPictureRelPath;
-    private boolean isShowWishPicture;
-    private String wishPictureName;
-    private boolean isOpenDetailThumb;
-    private String leaveLimitCount;
-    private boolean isShowLeaveHeadImg;
-    private boolean isShowGossip;
-}
+

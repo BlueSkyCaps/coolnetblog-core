@@ -1,12 +1,10 @@
 package top.reminisce.coolnetblogcore.service.home;
 
-import top.reminisce.coolnetblogcore.pojo.vo.Result;
-
 /**
  * @author BlueSky
  * @date 2022/10/1
  */
-public interface HomeService extends HomeMenuService, HomeFilePathService, HomeGossipService, HomeLoveLookService {
+public interface HomeService extends HomeMenuQueryService, HomeGossipQueryService, HomeLoveLookQueryService {
     /**
      * 在客户端首次加载首页时，返回首次加载所需的数据体。
      * 通常包括树形结构的导航栏菜单、小组件数据、前台配置，以及字段映射值。

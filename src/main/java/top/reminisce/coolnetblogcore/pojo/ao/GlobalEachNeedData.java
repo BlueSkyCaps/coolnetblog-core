@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * 在客户端首次加载首页时，返回首次加载所需的数据体。
+ * 作为bean，SCOPE_PROTOTYPE原型
  * @author BlueSky
  * @date 2022/10/1
  */
