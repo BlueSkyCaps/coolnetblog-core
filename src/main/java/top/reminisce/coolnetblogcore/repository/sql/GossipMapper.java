@@ -1,4 +1,4 @@
-package top.reminisce.coolnetblogcore.mapper;
+package top.reminisce.coolnetblogcore.repository.sql;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;

@@ -2,14 +2,15 @@ package top.reminisce.coolnetblogcore.service.home.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
-import top.reminisce.coolnetblogcore.common.ResultPack;
-import top.reminisce.coolnetblogcore.mapper.MenuMapper;
+import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreFilePath;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreLoveLook;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
-import top.reminisce.coolnetblogcore.pojo.vo.Result;
+import top.reminisce.coolnetblogcore.repository.mongo.SysAdminRepository;
+import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
 import top.reminisce.coolnetblogcore.service.home.HomeService;
+import top.reminisce.coolnetblogcore.util.bean.SpringBeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,15 +24,23 @@ import static top.reminisce.coolnetblogcore.util.StructureUtils.toTree;
 @Service
 public class HomeServiceImpl implements HomeService {
     private final MenuMapper menuMapper;
+    private final SysAdminRepository adminRepository;
+    private final SpringBeanUtils beanUtils;
 
-    public HomeServiceImpl(MenuMapper menuMapper) {
+    public HomeServiceImpl(MenuMapper menuMapper,SysAdminRepository adminRepository, SpringBeanUtils beanUtils) {
         this.menuMapper = menuMapper;
+        this.adminRepository = adminRepository;
+        this.beanUtils = beanUtils;
     }
 
     @Override
     public Object dealGlobalEachNeedData() {
-        // 处理菜单
+        // 获取菜单
         List<CoreMenu> treeMenus = getMenusToTree();
+        // 获取站点配置
+        CoreSysAdmin coreSysAdmin = adminRepository.getOneExcludeSecurity(beanUtils.getMongoTemplate());
+        /* 小组件 */
+        // "看看这些"小组件
         return treeMenus;
     }
 

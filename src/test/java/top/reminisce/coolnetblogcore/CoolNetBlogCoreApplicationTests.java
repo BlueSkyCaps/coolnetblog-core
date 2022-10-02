@@ -28,4 +28,22 @@ class CoolNetBlogCoreApplicationTests {
         Object data = homeService.dealGlobalEachNeedData();
         System.out.println(data);
     }
+
+    @Test
+    void mongoGetTest() {
+        Object data = homeService.dealGlobalEachNeedData();
+        System.out.println(data);
+    }
+
+    @Test
+    void mongoGetAdminExcludeTest() {
+        Object data = homeService.dealGlobalEachNeedData();
+        System.out.println(data);
+    }
+
+    @Test
+    void customExceptionTest() {
+        Object data = homeService.dealGlobalEachNeedData();
+        System.out.println(data);
+    }
 }
