@@ -2,6 +2,7 @@ package top.reminisce.coolnetblogcore.service.home.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
+import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreFilePath;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
@@ -23,14 +24,28 @@ import static top.reminisce.coolnetblogcore.util.StructureUtils.toTree;
  */
 @Service
 public class HomeServiceImpl implements HomeService {
+    /**
+     * 菜单数据访问层
+     */
     private final MenuMapper menuMapper;
+    /**
+     * SysAdmin数据访问层
+     */
     private final SysAdminRepository adminRepository;
+    /**
+     * 获取spring注入的bean的工具类
+     */
     private final SpringBeanUtils beanUtils;
+    /**
+     * 首次加载所需数据体
+     */
+    private final GlobalEachNeedData globalEachNeedData;
 
-    public HomeServiceImpl(MenuMapper menuMapper,SysAdminRepository adminRepository, SpringBeanUtils beanUtils) {
+    public HomeServiceImpl(MenuMapper menuMapper, SysAdminRepository adminRepository, SpringBeanUtils beanUtils, GlobalEachNeedData globalEachNeedData) {
         this.menuMapper = menuMapper;
         this.adminRepository = adminRepository;
         this.beanUtils = beanUtils;
+        this.globalEachNeedData = globalEachNeedData;
     }
 
     @Override
@@ -41,7 +56,9 @@ public class HomeServiceImpl implements HomeService {
         CoreSysAdmin coreSysAdmin = adminRepository.getOneExcludeSecurity(beanUtils.getMongoTemplate());
         /* 小组件 */
         // "看看这些"小组件
-        return treeMenus;
+        globalEachNeedData.setMenu(treeMenus);
+        globalEachNeedData.setSysAdmin(coreSysAdmin);
+        return globalEachNeedData;
     }
 
 
