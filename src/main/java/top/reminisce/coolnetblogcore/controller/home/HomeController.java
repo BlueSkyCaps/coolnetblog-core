@@ -3,6 +3,7 @@ package top.reminisce.coolnetblogcore.controller.home;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.reminisce.coolnetblogcore.common.ResultPack;
+import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.pojo.vo.Result;
 import top.reminisce.coolnetblogcore.service.home.GlobalNeedHomeService;
@@ -40,7 +41,7 @@ public class HomeController {
      */
     @GetMapping({"article"})
     public Result getArticles(String from, String keyword, Integer pageIndex){
-        List<CoreArticle> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, pageIndex);
+        List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, pageIndex);
         return ResultPack.fluent(searchArticles);
     }
 }
