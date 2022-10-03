@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public abstract class AbstractHomeQuery {
     /**
-     * SysAdmin数据访问层
+     * SysAdmin数据访问层 -> Mongo based
      */
     @Autowired
     protected SysAdminRepository adminRepository;

@@ -3,6 +3,7 @@ package top.reminisce.coolnetblogcore.service.home.abstractBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
+import top.reminisce.coolnetblogcore.repository.elastic.ArticleSearchRepository;
 import top.reminisce.coolnetblogcore.repository.mongo.SysAdminRepository;
 import top.reminisce.coolnetblogcore.service.home.HomeArticleQueryService;
 import top.reminisce.coolnetblogcore.util.ValidationUtils;
@@ -16,6 +17,12 @@ import java.util.List;
  */
 @Component
 public abstract class AbstractHomeArticleQuery extends AbstractHomeQuery implements HomeArticleQueryService {
+
+    /**
+     * ArticleSearch数据访问层 -> elastic based
+     */
+    @Autowired
+    protected ArticleSearchRepository articleSearchRepository;
 
     public List<CoreArticle> searchArticles(String from, String keyword, Integer pageIndex){
         ValidationUtils.searchArticlePramsCheck(from, keyword);
