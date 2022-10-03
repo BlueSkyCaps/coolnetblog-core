@@ -10,15 +10,12 @@ import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreLoveLook;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
-import top.reminisce.coolnetblogcore.repository.mongo.SysAdminRepository;
-import top.reminisce.coolnetblogcore.repository.sql.ArticleMapper;
 import top.reminisce.coolnetblogcore.repository.sql.GossipMapper;
 import top.reminisce.coolnetblogcore.repository.sql.LoveLookMapper;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
-import top.reminisce.coolnetblogcore.service.home.HomeService;
-import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeQuery;
+import top.reminisce.coolnetblogcore.service.home.GlobalNeedHomeService;
+import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQuery;
 import top.reminisce.coolnetblogcore.util.ValidationUtils;
-import top.reminisce.coolnetblogcore.util.bean.SpringBeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +27,7 @@ import static top.reminisce.coolnetblogcore.util.StructureUtils.toTree;
  * @date 2022/10/1
  */
 @Service
-public class HomeServiceImpl extends AbstractHomeQuery implements HomeService {
+public class HomeServiceImpl extends AbstractHomeArticleQuery implements GlobalNeedHomeService {
     /**
      * 菜单数据访问层
      */
@@ -43,14 +40,7 @@ public class HomeServiceImpl extends AbstractHomeQuery implements HomeService {
      * "闲言碎语"小组件数据访问层
      */
     private final GossipMapper gossipMapper;
-    /**
-     * SysAdmin数据访问层
-     */
-    private final SysAdminRepository adminRepository;
-    /**
-     * 获取spring注入的bean的工具类
-     */
-    private final SpringBeanUtils beanUtils;
+
     /**
      * 首次加载所需数据体
      */
@@ -61,21 +51,19 @@ public class HomeServiceImpl extends AbstractHomeQuery implements HomeService {
      */
 
     public HomeServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper,
-                           GossipMapper gossipMapper, SysAdminRepository adminRepository,
-                           SpringBeanUtils beanUtils, GlobalEachNeedData globalEachNeedData) {
+                           GossipMapper gossipMapper, GlobalEachNeedData globalEachNeedData) {
         this.menuMapper = menuMapper;
         this.loveLookMapper = loveLookMapper;
         this.gossipMapper = gossipMapper;
-        this.adminRepository = adminRepository;
-        this.beanUtils = beanUtils;
         this.globalEachNeedData = globalEachNeedData;
     }
 
+    @Override
     public Object dealGlobalEachNeedData() {
         // 获取菜单
         List<CoreMenu> treeMenus = getMenusToTree();
         // 获取站点配置
-        CoreSysAdmin coreSysAdmin = adminRepository.getOneExcludeSecurity(beanUtils.getMongoTemplate());
+        CoreSysAdmin coreSysAdmin = super.adminRepository.getOneExcludeSecurity(super.beanUtils.getMongoTemplate());
         /* 小组件 */
         if (coreSysAdmin.getSiteSetting().isShowLoveLook()){
             // 获取"看看这些"小组件

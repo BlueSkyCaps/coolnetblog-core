@@ -6,13 +6,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
-import top.reminisce.coolnetblogcore.service.home.HomeService;
+import top.reminisce.coolnetblogcore.service.home.GlobalNeedHomeService;
 
 @SpringBootTest
 class CoolNetBlogCoreApplicationTests {
 
     @Autowired
-    HomeService homeService;
+    GlobalNeedHomeService homeService;
     CoreMenu menu;
     @Test
     void contextLoads() {

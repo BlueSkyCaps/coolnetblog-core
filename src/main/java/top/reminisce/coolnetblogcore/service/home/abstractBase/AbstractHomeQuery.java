@@ -20,35 +20,15 @@ import java.util.List;
  * @date 2022/10/2
  */
 @Component
-public abstract class AbstractHomeQuery implements HomeArticleQueryService {
-
+public abstract class AbstractHomeQuery {
     /**
      * SysAdmin数据访问层
      */
     @Autowired
-    private SysAdminRepository adminRepository;
+    protected SysAdminRepository adminRepository;
     /**
      * 获取spring注入的bean的工具类
      */
     @Autowired
-    private  SpringBeanUtils beanUtils;
-
-    public List<CoreArticle> searchArticles(String from, String keyword, Integer pageIndex){
-        ValidationUtils.searchArticlePramsCheck(from, keyword);
-        Integer pageCountValue = adminRepository.getSettingPageCountValue(beanUtils.getMongoTemplate());
-        // 从配置中获取设置的每页文章条数
-        ValidationUtils.pagePramsCheck(pageIndex, pageCountValue);
-        // 开始根据动作来源检索文章数据。从elasticsearch
-        return null;
-    }
-
-    @Override
-    public List<CoreArticle> getAllArticles() {
-        return null;
-    }
-
-    @Override
-    public CoreArticle getArticleById(Integer id) {
-        return null;
-    }
+    protected  SpringBeanUtils beanUtils;
 }
