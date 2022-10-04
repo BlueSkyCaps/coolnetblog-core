@@ -1,5 +1,7 @@
 package top.reminisce.coolnetblogcore.common;
 
+import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
+
 import javax.print.attribute.standard.Finishings;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,5 +25,15 @@ public class CommonGlobalRef {
      */
     public static List<String> searchArticleActionValues = Arrays.asList(SEARCH_ACTION_FROM_MENU, SEARCH_ACTION_FROM_KEYWORD);
 
+    /**
+     * 可被关键词模糊匹配搜索的ArticleSearch文章文档的字段
+     */
+    public static final String[] ARTICLE_SEARCH_ABLE_FIELD_NAMES = new String[]{"title", "content", "abstractMsg", "labels"};
+
+    /**
+     * 文章文档索引名
+     */
+    public static final String ARTICLE_SEARCH_INDEX_NAME = ArticleSearch.class.getAnnotation(
+        org.springframework.data.elasticsearch.annotations.Document.class).indexName();
 }
 

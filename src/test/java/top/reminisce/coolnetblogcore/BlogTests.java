@@ -21,7 +21,7 @@ class BlogTests {
     }
     @Test
     void getMongoPageCountTest() {
-        homeController.getArticles("keyword", "aa", 1);
+        homeController.getArticles("keyword", "aa", 1, 1);
         System.out.println(data);
     }
 }

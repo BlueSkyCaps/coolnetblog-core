@@ -1,13 +1,11 @@
 package top.reminisce.coolnetblogcore.util;
 
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import top.reminisce.coolnetblogcore.common.BlogException;
 
 import java.util.Objects;
 
-import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.SEARCH_ACTION_FROM_KEYWORD;
-import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.searchArticleActionValues;
+import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.*;
 
 /**
  * 验证博客业务数据有效性工具类
@@ -31,15 +29,20 @@ public class ValidationUtils {
 
     /**
      * 验证文章搜索参数逻辑
-     * @param from 来源动作，菜单还是关键词搜索
+     *
+     * @param from    来源动作，菜单还是关键词搜索
      * @param keyword 若来源是关键词搜索，则是关键词
+     * @param menuId 若来源是菜单，则是菜单ID
      */
-    public static void searchArticlePramsCheck(String from, String keyword){
+    public static void searchArticlePramsCheck(String from, String keyword, Integer menuId){
         if (! ObjectUtils.isEmpty(from) && ! searchArticleActionValues.contains(from)){
             throw new BlogException("当前文章搜索的动作来源无效，提供了具体来源值，但不是有效的来源值");
         }
         if (Objects.equals(from, SEARCH_ACTION_FROM_KEYWORD) && ObjectUtils.isEmpty(keyword)){
             throw new BlogException(String.format("当前文章搜索的动作来源为%s，但要搜索的关键词未提供", SEARCH_ACTION_FROM_KEYWORD));
+        }
+        if (Objects.equals(from, SEARCH_ACTION_FROM_MENU) && (ObjectUtils.isEmpty(menuId) || menuId < 1)){
+            throw new BlogException(String.format("当前文章搜索的动作来源为%s，但要菜单id未提供", SEARCH_ACTION_FROM_MENU));
         }
     }
 }

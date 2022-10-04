@@ -40,8 +40,8 @@ public class HomeController {
      * @return Result数据体
      */
     @GetMapping({"article"})
-    public Result getArticles(String from, String keyword, Integer pageIndex){
-        List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, pageIndex);
+    public Result getArticles(String from, String keyword, Integer menuId, Integer pageIndex){
+        List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, menuId, pageIndex);
         return ResultPack.fluent(searchArticles);
     }
 }

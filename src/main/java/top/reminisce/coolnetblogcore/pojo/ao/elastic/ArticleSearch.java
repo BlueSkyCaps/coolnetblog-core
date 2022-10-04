@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 import java.util.Date;
 
@@ -17,7 +18,8 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@Document(indexName="core_blog_article", createIndex=false)
+@Document(indexName="core_blog_article", createIndex=true)
+@Setting
 public class ArticleSearch {
     /**
      * mysql文章id，而不是自动生成的文档id
@@ -27,15 +29,16 @@ public class ArticleSearch {
 
     private Integer menuId;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String title;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String content;
 
+    @Field(type = FieldType.Boolean, index = false)
     private Boolean isShowTitle;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String abstractMsg;
 
     @Field(type = FieldType.Date, pattern = "uuuu-MM-dd HH:mm:ss")
@@ -44,15 +47,15 @@ public class ArticleSearch {
     @Field(type = FieldType.Date, pattern = "uuuu-MM-dd HH:mm:ss")
     private Date updateTime;
 
+    @Field(type = FieldType.Boolean, index = false)
     private Boolean isLock;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String labels;
 
     @Field(type = FieldType.Keyword)
     private String custUri;
 
-    private Integer commentType;
-
+    @Field(type = FieldType.Boolean, index = false)
     private Boolean isSpecial;
 }

@@ -14,6 +14,7 @@ import top.reminisce.coolnetblogcore.util.ValidationUtils;
 
 import java.util.List;
 
+import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.SEARCH_ACTION_FROM_KEYWORD;
 import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.SEARCH_ACTION_FROM_MENU;
 
 /**
@@ -37,38 +38,35 @@ public abstract class AbstractHomeArticleQuery extends AbstractHomeQuery impleme
      * keyword 点击了搜索框<br>
      * 若不存在列表中，则是不带任何来源的文章分页<br>
      */
-    public List<ArticleSearch> searchArticles(String from, String keyword, Integer pageIndex){
-        ValidationUtils.searchArticlePramsCheck(from, keyword);
-        Integer pageCountValue = super.adminRepository.getSettingPageCountValue(super.beanUtils.getMongoTemplate());
+    public List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex){
+        ValidationUtils.searchArticlePramsCheck(from, keyword, menuId);
         // 从配置中获取设置的每页文章条数
+        Integer pageCountValue = super.adminRepository.getSettingPageCountValue(super.beanUtils.getMongoTemplate());
         ValidationUtils.pagePramsCheck(pageIndex, pageCountValue);
         // 开始根据动作来源检索文章数据。从elasticsearch
-        dealArticlePageDataByFrom(from, keyword, pageIndex, pageCountValue);
-        return null;
+        return dealArticlePageDataByFrom(from, keyword, menuId, pageIndex, pageCountValue);
     }
 
     /**
      * 处理文章分页核心方法
      */
-    private List<ArticleSearch> dealArticlePageDataByFrom(String from, String keyword, Integer pageIndex, Integer pageCountValue) {
+    private List<ArticleSearch> dealArticlePageDataByFrom(String from, String keyword, Integer menuId,
+                                                          Integer pageIndex, Integer pageCountValue) {
         List<ArticleSearch> articleSearches = null;
+        Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
         // 不带任何来源的文章分页
         if (ObjectUtils.isEmpty(from)){
-            Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
-            Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
             articleSearches = this.articleSearchRepository.findAll(pageable).getContent();
         }
         // 点击检索了某菜单
         if (from.equals(SEARCH_ACTION_FROM_MENU)){
-            Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
-            Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
-            articleSearches = this.articleSearchRepository.findAll(pageable).getContent();
+            articleSearches = this.articleSearchRepository.findByMenuId(menuId, pageable);
         }
         // 点击了搜索框
-        if (from.equals(SEARCH_ACTION_FROM_MENU)){
-            Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
-            Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
-            articleSearches = this.articleSearchRepository.findAll(pageable).getContent();
+        if (from.equals(SEARCH_ACTION_FROM_KEYWORD)){
+             this.articleSearchRepository.fuzzinessSearch(super.beanUtils.getElasticsearchRestTemplate(),
+                keyword, pageable);
         }
         return articleSearches;
     }
