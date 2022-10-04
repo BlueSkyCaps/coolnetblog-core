@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreFilePath;
 
 /**
+ * 文件路径数据访问层 -> sql based
  * @author BlueSky
  * @date 2022/10/1
  */

@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
+ * SysAdmin数据访问层 -> mongo based
  * @author BlueSky
  * @date 2022/10/2
  */

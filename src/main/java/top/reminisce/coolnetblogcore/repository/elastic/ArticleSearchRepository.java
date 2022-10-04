@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
@@ -18,6 +19,8 @@ import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.ARTICLE_SEARCH_ABLE_FIELD_NAMES;
 import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.ARTICLE_SEARCH_INDEX_NAME;
@@ -38,7 +41,7 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
      */
     List<ArticleSearch> findByMenuId(Integer menuId, Pageable pageable);
     /**
-     * 插入一条文章文档
+     * 插入一条文章文档。（若id存在则会更新）
      * @param template ElasticsearchRestTemplate对象
      * @param articleDoc 文档
      * @return 生成的id
@@ -47,12 +50,38 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
         if (Objects.isNull(template)) {
             throw new BlogException("ElasticsearchRestTemplate必须不为null！");
         }
-        IndexQuery indexQuery = new IndexQueryBuilder()
+        if (Objects.isNull(articleDoc)) {
+            throw new BlogException("要插入的文章文档必须不为null！");
+        }
+        IndexQuery indexDocumentQuery = new IndexQueryBuilder()
             .withId(articleDoc.getId())
             .withObject(articleDoc).build();
         return template
-            .index(indexQuery, IndexCoordinates.of(ARTICLE_SEARCH_INDEX_NAME));
+            .index(indexDocumentQuery, IndexCoordinates.of(ARTICLE_SEARCH_INDEX_NAME));
     }
+
+    /**
+     * 插入多条文章文档。（若id存在则会更新）
+     * @param template ElasticsearchRestTemplate对象
+     * @param articleDocs 文档列表
+     * @return 生成的文档对象的信息列表
+     */
+    default List<IndexedObjectInformation> insertMany(ElasticsearchRestTemplate template, Set<ArticleSearch> articleDocs) {
+        if (Objects.isNull(template)) {
+            throw new BlogException("ElasticsearchRestTemplate必须不为null！");
+        }
+        if (Objects.isNull(articleDocs) || articleDocs.isEmpty()) {
+            throw new BlogException("要插入的文章文档必须不为空！");
+        }
+        List<IndexQuery> indexDocumentQueries = articleDocs.stream()
+            .map(a -> new IndexQueryBuilder()
+                .withId(a.getId())
+                .withObject(a)
+                .build())
+            .collect(Collectors.toList());
+        return template.bulkIndex(indexDocumentQueries, IndexCoordinates.of(ARTICLE_SEARCH_INDEX_NAME));
+    }
+
     /**
      * 插入一条文章文档，不自动生成id，id主动提供
      * @param template ElasticsearchRestTemplate对象

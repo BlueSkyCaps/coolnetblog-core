@@ -6,18 +6,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import top.reminisce.coolnetblogcore.controller.home.HomeController;
 import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
+import top.reminisce.coolnetblogcore.synchronization.PersistToElasticSearchSynchronizer;
 
 @SpringBootTest
 @Component
 class ArticleSearchSaveReallyTests {
     @Autowired
-    private GlobalEachNeedData data;
-    @Autowired
-
-    private HomeController homeController;
+    private PersistToElasticSearchSynchronizer elasticSearchSynchronizer;
 
     @Test
     void saveArticleToElasticSearchTest() {
-        System.out.println(data);
+        elasticSearchSynchronizer.articlesInsertInFullSync();
     }
 }

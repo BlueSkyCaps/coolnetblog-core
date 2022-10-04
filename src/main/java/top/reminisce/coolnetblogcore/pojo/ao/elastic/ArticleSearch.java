@@ -1,5 +1,6 @@
 package top.reminisce.coolnetblogcore.pojo.ao.elastic;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @Document(indexName="core_blog_article", createIndex=true)
 public class ArticleSearch {

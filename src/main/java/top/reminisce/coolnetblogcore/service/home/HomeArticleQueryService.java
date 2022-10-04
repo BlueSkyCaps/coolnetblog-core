@@ -21,8 +21,8 @@ public interface HomeArticleQueryService extends BaseService {
     CoreArticle getDetailBasedQueryContext(String custUri, Integer id);
 
     /**
-     * 获取文章分页数据，而不是文章详情。<br>
-     * 采用elasticsearch存储文章检索的数据。但具体文章详情存储于mysql，参见"获取文章详情"。
+     * 获取文章分页数据，从elasticsearch中获取，而不是mysql。<br>
+     * 采用elasticsearch存储文章检索的数据。但具体文章详情存储于mysql。
      * @param from 前台网页查询文章的来源动作：<br>
      * menu 点击检索了某菜单<br>
      * keyword 点击了搜索框<br>

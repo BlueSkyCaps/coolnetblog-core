@@ -1,5 +1,7 @@
 package top.reminisce.coolnetblogcore.pojo.po.sql;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

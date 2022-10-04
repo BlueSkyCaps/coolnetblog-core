@@ -1,5 +1,7 @@
 package top.reminisce.coolnetblogcore.service.admin.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.*;
@@ -71,5 +73,13 @@ public class AdminServiceImpl extends AbstractAdminService implements AdminServi
     @Override
     public List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex) {
         return null;
+    }
+
+    @Override
+    public List<CoreArticle> getAllViewAbleArticles() {
+        Wrapper<CoreArticle> qw = new LambdaQueryWrapper<CoreArticle>()
+            .eq(CoreArticle::getIsDraft, false)
+            .orderByDesc(CoreArticle::getUpdateTime);
+        return this.articleMapper.selectList(qw);
     }
 }
