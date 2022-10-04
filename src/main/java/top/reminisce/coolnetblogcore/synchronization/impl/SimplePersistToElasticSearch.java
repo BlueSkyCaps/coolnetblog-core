@@ -16,6 +16,7 @@ import top.reminisce.coolnetblogcore.util.convert.ArticleToArticleSearchMapperUt
 import java.util.*;
 
 /**
+ * mysql同步elasticsearch的简单实现类
  * @author BlueSky
  * @date 2022/10/2
  */
