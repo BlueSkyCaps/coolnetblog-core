@@ -12,7 +12,8 @@ import java.util.List;
  * @date 2022/10/1
  */
 public interface HomeGossipQueryService extends BaseService {
-    List<CoreGossip> getAllGossip();
+    /**
+     * 根据分页获取，"闲言碎语"组件数据
+     */
     List<CoreGossip> getGossipBySlide(@NotNull Integer index,  @Value("10") Integer count);
-    CoreGossip getGossipById(@NotNull Integer id);
 }

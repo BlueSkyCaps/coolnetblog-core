@@ -19,7 +19,6 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Document(indexName="core_blog_article", createIndex=true)
-@Setting
 public class ArticleSearch {
     /**
      * mysql文章id，而不是自动生成的文档id

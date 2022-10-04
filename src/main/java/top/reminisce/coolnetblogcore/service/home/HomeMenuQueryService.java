@@ -11,7 +11,10 @@ import java.util.List;
  * @date 2022/10/1
  */
 public interface HomeMenuQueryService extends BaseService {
-    List<CoreMenu> getAllMenus();
+
+    /**
+     * 获取所有菜单，并形成树形
+     */
     List<CoreMenu> getMenusToTree();
-    CoreMenu getMenuById(@NotNull Integer id);
+
 }

@@ -13,8 +13,8 @@ import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.repository.sql.GossipMapper;
 import top.reminisce.coolnetblogcore.repository.sql.LoveLookMapper;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
-import top.reminisce.coolnetblogcore.service.home.GlobalNeedHomeService;
-import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQuery;
+import top.reminisce.coolnetblogcore.service.home.HomeGlobalNeedService;
+import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQueryService;
 import top.reminisce.coolnetblogcore.util.ValidationUtils;
 
 import java.util.List;
@@ -27,17 +27,17 @@ import static top.reminisce.coolnetblogcore.util.StructureUtils.toTree;
  * @date 2022/10/1
  */
 @Service
-public class HomeServiceImpl extends AbstractHomeArticleQuery implements GlobalNeedHomeService {
+public class HomeServiceImpl extends AbstractHomeArticleQueryService implements HomeGlobalNeedService {
     /**
-     * 菜单数据访问层
+     * 菜单数据访问层 -> sql based
      */
     private final MenuMapper menuMapper;
     /**
-     * "看看这些"小组件数据访问层
+     * "看看这些"小组件数据访问层 -> sql based
      */
     private final LoveLookMapper loveLookMapper;
     /**
-     * "闲言碎语"小组件数据访问层
+     * "闲言碎语"小组件数据访问层 -> sql based
      */
     private final GossipMapper gossipMapper;
 
@@ -46,9 +46,6 @@ public class HomeServiceImpl extends AbstractHomeArticleQuery implements GlobalN
      */
     private final GlobalEachNeedData globalEachNeedData;
 
-    /**
-     * 文章数据访问层
-     */
 
     public HomeServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper,
                            GossipMapper gossipMapper, GlobalEachNeedData globalEachNeedData) {
@@ -82,11 +79,6 @@ public class HomeServiceImpl extends AbstractHomeArticleQuery implements GlobalN
 
 
     @Override
-    public List<CoreGossip> getAllGossip() {
-        return null;
-    }
-
-    @Override
     public List<CoreGossip> getGossipBySlide(Integer index, Integer count) {
         ValidationUtils.pagePramsCheck(index, count);
         IPage<CoreGossip> page = new Page<>(index, count);
@@ -95,24 +87,9 @@ public class HomeServiceImpl extends AbstractHomeArticleQuery implements GlobalN
     }
 
     @Override
-    public CoreGossip getGossipById(Integer id) {
-        return null;
-    }
-
-    @Override
     public List<CoreLoveLook> getAllLoveLook() {
         return this.loveLookMapper.selectList(new LambdaQueryWrapper<CoreLoveLook>()
             .orderByDesc(CoreLoveLook::getAddTime));
-    }
-
-    @Override
-    public CoreLoveLook getLoveLookById(Integer id) {
-        return null;
-    }
-
-    @Override
-    public List<CoreMenu> getAllMenus() {
-        return null;
     }
 
     @Override
@@ -128,11 +105,4 @@ public class HomeServiceImpl extends AbstractHomeArticleQuery implements GlobalN
         // 递归，为每个顶级菜单形成多级菜单
         return toTree(topMenus, children);
     }
-
-
-    @Override
-    public CoreMenu getMenuById(Integer id) {
-        return null;
-    }
-
 }

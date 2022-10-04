@@ -9,13 +9,13 @@ import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.repository.elastic.ArticleSearchRepository;
-import top.reminisce.coolnetblogcore.service.home.GlobalNeedHomeService;
+import top.reminisce.coolnetblogcore.service.home.HomeGlobalNeedService;
 
 @SpringBootTest
 class CoolNetBlogCoreApplicationTests {
 
     @Autowired
-    GlobalNeedHomeService homeService;
+    HomeGlobalNeedService homeService;
     CoreMenu menu;
     @Test
     void contextLoads() {

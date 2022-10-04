@@ -23,13 +23,14 @@ import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.ARTICLE_SEARC
 import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.ARTICLE_SEARCH_INDEX_NAME;
 
 /**
+ * ArticleSearch数据访问层 -> elastic based
  * @author BlueSky
  * @date 2022/10/3
  */
 public interface ArticleSearchRepository extends ElasticsearchRepository<ArticleSearch, String> {
 
     /**
-     * 获取属于MenuId的文章列表，采用分页。<br/>
+     * 获取属于MenuId的文章列表，采用分页。<br>
      * 约束仓储
      * @param menuId 指定menuId
      * @param pageable 分页对象

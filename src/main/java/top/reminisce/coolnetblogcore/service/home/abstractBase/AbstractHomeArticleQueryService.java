@@ -1,18 +1,24 @@
 package top.reminisce.coolnetblogcore.service.home.abstractBase;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import top.reminisce.coolnetblogcore.common.BlogException;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.repository.elastic.ArticleSearchRepository;
+import top.reminisce.coolnetblogcore.repository.sql.ArticleMapper;
 import top.reminisce.coolnetblogcore.service.home.HomeArticleQueryService;
 import top.reminisce.coolnetblogcore.util.ValidationUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.SEARCH_ACTION_FROM_KEYWORD;
 import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.SEARCH_ACTION_FROM_MENU;
@@ -22,7 +28,7 @@ import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.SEARCH_ACTION
  * @date 2022/10/2
  */
 @Component
-public abstract class AbstractHomeArticleQuery extends AbstractHomeQuery implements HomeArticleQueryService {
+public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryService implements HomeArticleQueryService {
 
     /**
      * ArticleSearch数据访问层 -> elastic based
@@ -31,13 +37,13 @@ public abstract class AbstractHomeArticleQuery extends AbstractHomeQuery impleme
     protected ArticleSearchRepository articleSearchRepository;
 
     /**
-     * 获取文章分页数据，而不是文章详情。<br>
-     * 采用elasticsearch存储文章检索的数据。但具体文章详情存储于mysql，参见"获取文章详情"。
-     * @param from 前台网页查询文章的来源动作：<br>
-     * menu 点击检索了某菜单<br>
-     * keyword 点击了搜索框<br>
-     * 若不存在列表中，则是不带任何来源的文章分页<br>
+     * Article数据访问层 -> sql based
      */
+    @Autowired
+    protected ArticleMapper articleMapper;
+
+
+    @Override
     public List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex){
         ValidationUtils.searchArticlePramsCheck(from, keyword, menuId);
         // 从配置中获取设置的每页文章条数
@@ -65,19 +71,35 @@ public abstract class AbstractHomeArticleQuery extends AbstractHomeQuery impleme
         }
         // 点击了搜索框
         if (from.equals(SEARCH_ACTION_FROM_KEYWORD)){
-             this.articleSearchRepository.fuzzinessSearch(super.beanUtils.getElasticsearchRestTemplate(),
-                keyword, pageable);
+            articleSearches = this.articleSearchRepository.fuzzinessSearch(super.beanUtils.getElasticsearchRestTemplate(),
+                keyword, pageable).getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
         }
         return articleSearches;
     }
 
     @Override
-    public List<CoreArticle> getAllArticles() {
-        return null;
+    public CoreArticle getDetailBasedQueryContext(String custUri, Integer id) {
+        CoreArticle article;
+        if (! ObjectUtils.isEmpty(custUri)){
+            article = getArticleByCustUri(custUri);
+            if (article == null){
+                article = getArticleById(id);
+            }
+        }else {
+            article = getArticleById(id);
+        }
+        if (article == null){
+            throw new BlogException("已获取不到此文章，请刷新。");
+        }
+        return article;
     }
 
-    @Override
-    public CoreArticle getArticleById(Integer id) {
-        return null;
+    private CoreArticle getArticleById(Integer id){
+        return this.articleMapper.selectById(id);
+    }
+
+    private CoreArticle getArticleByCustUri(String custUri){
+        Wrapper<CoreArticle> wrapper = new LambdaQueryWrapper<CoreArticle>().eq(CoreArticle::getCustUri, custUri);
+        return this.articleMapper.selectOne(wrapper);
     }
 }

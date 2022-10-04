@@ -10,5 +10,8 @@ import java.util.List;
  * @date 2022/10/1
  */
 public interface HomeFieldMapQueryService extends BaseService {
+    /**
+     * 获取所有字段值映射
+     */
     List<CoreFieldMap> getAllFieldMap();
 }

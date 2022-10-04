@@ -14,7 +14,7 @@ public class ExceptionController {
     @ExceptionHandler(value = {Exception.class})
     @ResponseBody
     public Result handler(Throwable ex){
-        return ResultPack.error(ex.getMessage(), ex);
+        return ResultPack.error(ex.getMessage());
     }
 }
 

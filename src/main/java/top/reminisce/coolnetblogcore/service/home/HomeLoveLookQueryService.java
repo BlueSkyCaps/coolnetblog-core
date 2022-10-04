@@ -11,6 +11,8 @@ import java.util.List;
  * @date 2022/10/1
  */
 public interface HomeLoveLookQueryService extends BaseService {
+    /**
+     * 获取所有"看看这些"组件数据
+     */
     List<CoreLoveLook> getAllLoveLook();
-    CoreLoveLook getLoveLookById(@NotNull Integer id);
 }
