@@ -19,8 +19,8 @@ public interface HomeCommentReplyService {
      * @param commentCount 每页获取的评论数
      * @param replyCount 每条评论获取的关联回复数
      */
-    List<CoreComment> getCommentsCarryRepliesByArticleIdBasedSlide(@NotNull Integer articleId, @NotNull Integer index,
-                                   @Value("10") Integer commentCount, @Value("10") Integer replyCount);
+    List<CoreComment> getCommentsCarryRepliesByArticleIdBasedSlide(Integer articleId, Integer index,
+                                   Integer commentCount, Integer replyCount);
 
     /**
      * 根据评论id获取所有关联回复

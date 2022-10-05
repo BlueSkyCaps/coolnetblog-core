@@ -39,12 +39,12 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
             throw new BlogException("文章已不存在，请刷新。");
         }
         Sort sort = Sort.by(Sort.Direction.DESC, "commentTime");
-        Pageable pageable = PageRequest.of(index - 1, 10, sort);
+        Pageable pageable = PageRequest.of(index - 1, commentCount, sort);
         // 获取文章的评论，指定数量，分页。
         List<CoreComment> comments = commentRepository.findBySourceIdAndSourceType(articleId, 1, pageable);
         // 迭代获取每个评论的回复数据，初始化第一页回复
         for (CoreComment comment : comments) {
-            comment.setReplies(getRepliesByCommentIdBasedSlide(comment.getId(), 1, 10));
+            comment.setReplies(getRepliesByCommentIdBasedSlide(comment.getId(), 1, replyCount));
         }
         return comments;
     }
