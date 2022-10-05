@@ -3,7 +3,6 @@ package top.reminisce.coolnetblogcore.service.home;
 import org.springframework.beans.factory.annotation.Value;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreComment;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreReply;
-import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  * @author BlueSky
  * @date 2022/10/5
  */
-public interface HomeCommentService {
+public interface HomeCommentReplyService {
     /**
      * 根据文章id获取评论和关联回复，使用分页
      * @param articleId 文章id
