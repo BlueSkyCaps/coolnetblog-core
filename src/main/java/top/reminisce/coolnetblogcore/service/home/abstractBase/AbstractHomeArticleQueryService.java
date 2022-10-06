@@ -94,7 +94,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         return article;
     }
 
-    private CoreArticle getArticleById(Integer id){
+    protected CoreArticle getArticleById(Integer id){
         return this.articleMapper.selectById(id);
     }
 

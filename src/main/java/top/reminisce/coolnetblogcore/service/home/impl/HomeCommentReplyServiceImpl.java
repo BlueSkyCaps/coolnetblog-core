@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import top.reminisce.coolnetblogcore.common.BlogException;
+import top.reminisce.coolnetblogcore.pojo.dto.CommentAddDto;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreComment;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreReply;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
@@ -14,7 +15,11 @@ import top.reminisce.coolnetblogcore.repository.mongo.CommentRepository;
 import top.reminisce.coolnetblogcore.repository.mongo.ReplyRepository;
 import top.reminisce.coolnetblogcore.service.home.HomeCommentReplyService;
 import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQueryService;
+import top.reminisce.coolnetblogcore.util.TimeUtils;
+import top.reminisce.coolnetblogcore.util.convert.CommentAddDtoToCommentMapperUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -32,16 +37,70 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
         this.replyRepository = replyRepository;
     }
 
-    @Override
-    public List<CoreComment> getCommentsCarryRepliesByArticleIdBasedSlide(Integer articleId, Integer index, Integer commentCount, Integer replyCount) {
-        CoreArticle article = super.articleMapper.selectById(articleId);
-        if (ObjectUtils.isEmpty(article)){
-            throw new BlogException("文章已不存在，请刷新。");
+    /**
+     * 初始化待插入的评论实体逻辑
+     * @param comment 评论实体<br>
+     * comment.sourceId 评论的来源内容id，比如文章id<br>
+     * comment.sourceType 评论的来源内容类型，比如文章
+     * @return 评论的来源内容数据，如文章实体
+     */
+    private Object initSourceAddCommentLogic(CoreComment comment){
+        Object source = null;
+        comment.setPassed(true);
+        if (comment.getSourceType()==1){
+            // 评论的来源内容类型为文章，处理相应的评论封装
+            source = super.getArticleById(comment.getSourceId());
+            if (ObjectUtils.isEmpty(source)){
+                throw new BlogException("文章已不存在，请刷新。");
+            }
+            // 转化为文章对象
+            CoreArticle article =  ((CoreArticle)source);
+            // 评论类型来源是文章，且文章的评论设置为需要审核通过评论才能显示
+            if (article.getCommentType()==2){
+                comment.setPassed(false);
+            }
         }
+        packCommentEntity(comment, comment.getSourceId(), comment.getSourceType());
+        return source;
+    }
+
+    private void packCommentEntity(CoreComment comment, Integer sourceId, Integer sourceType){
+        try {
+            comment.setCommentTime(TimeUtils.currentDateTime());
+        } catch (ParseException e) {
+            throw new RuntimeException("添加评论：设置当前评论日期失败。"+e.getMessage());
+        }
+        comment.setId(null);
+        comment.setSourceId(sourceId);
+        comment.setSourceType(sourceType);
+        comment.setAdmin(false);
+    }
+
+    /**
+     * 检查评论所对应的源内容是否存在
+     * @param sourceId 评论的来源内容id，比如文章id
+     * @param sourceType 评论的来源内容类型，比如文章
+     * @return 评论的来源内容数据，如文章实体
+     */
+    private Object initSourceExistLogic(Integer sourceId, Integer sourceType){
+        Object source = null;
+        if (sourceType==1){
+            // 评论的来源内容类型为文章，处理相应的评论封装
+            source = super.getArticleById(sourceId);
+            if (ObjectUtils.isEmpty(source)){
+                throw new BlogException("文章已不存在，请刷新。");
+            }
+        }
+        return source;
+    }
+
+    @Override
+    public List<CoreComment> getCommentsCarryRepliesByArticleIdBasedSlide(Integer sourceId, Integer sourceType, Integer index, Integer commentCount, Integer replyCount) {
+        initSourceExistLogic(sourceId, sourceType);
         Sort sort = Sort.by(Sort.Direction.DESC, "commentTime");
         Pageable pageable = PageRequest.of(index - 1, commentCount, sort);
         // 获取文章的评论，指定数量，分页。
-        List<CoreComment> comments = commentRepository.findBySourceIdAndSourceType(articleId, 1, pageable);
+        List<CoreComment> comments = commentRepository.findBySourceIdAndSourceType(sourceId, 1, pageable);
         // 迭代获取每个评论的回复数据，初始化第一页回复
         for (CoreComment comment : comments) {
             comment.setReplies(getRepliesByCommentIdBasedSlide(comment.getId(), 1, replyCount));
@@ -59,5 +118,17 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
         Sort sort = Sort.by(Sort.Direction.DESC, "replyTime");
         Pageable pageable = PageRequest.of(index - 1, 10, sort);
         return replyRepository.findByCommentId(commentId, pageable);
+    }
+
+    @Override
+    public CoreComment addCommentPackProcessor(CommentAddDto commentAdd, HttpServletRequest request) {
+        CoreComment comment = CommentAddDtoToCommentMapperUtils.INSTANCE.commentAddDtoToComment(commentAdd);
+        initSourceAddCommentLogic(comment);
+        return this.commentRepository.save(comment);
+    }
+
+    @Override
+    public CoreReply addCommentReplyPackProcessor() {
+        return null;
     }
 }

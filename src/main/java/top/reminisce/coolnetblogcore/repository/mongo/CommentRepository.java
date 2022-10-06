@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public interface CommentRepository extends MongoRepository<CoreComment, Integer> {
     /**
-     * 获取指定文章id的评论，使用分页
+     * 获取指定原内容id的评论，使用分页
      * @param sourceId 源内容id（文章id...）
      * @param sourceType 源内容类型（通常文章是1）
      * @param page 分页对象
