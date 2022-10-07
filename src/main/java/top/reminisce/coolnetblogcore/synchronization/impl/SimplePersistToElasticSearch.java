@@ -1,17 +1,14 @@
 package top.reminisce.coolnetblogcore.synchronization.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.repository.elastic.ArticleSearchRepository;
 import top.reminisce.coolnetblogcore.service.admin.AdminService;
-import top.reminisce.coolnetblogcore.service.admin.ArticleService;
 import top.reminisce.coolnetblogcore.synchronization.PersistToElasticSearchSynchronizer;
 import top.reminisce.coolnetblogcore.util.bean.SpringBeanUtils;
-import top.reminisce.coolnetblogcore.util.convert.ArticleToArticleSearchMapperUtils;
+import top.reminisce.coolnetblogcore.util.mapperConvert.ArticleToArticleSearchMapperUtils;
 
 import java.util.*;
 

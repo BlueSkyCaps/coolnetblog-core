@@ -1,8 +1,8 @@
 package top.reminisce.coolnetblogcore.service.home;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
 import top.reminisce.coolnetblogcore.pojo.dto.CommentAddDto;
+import top.reminisce.coolnetblogcore.pojo.dto.ReplyAddDto;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreComment;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreReply;
 
@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
+ * 前台评论回复服务层 只用于获取数据
  * @author BlueSky
  * @date 2022/10/5
  */
@@ -23,8 +24,8 @@ public interface HomeCommentReplyService {
      * @param commentCount 每页获取的评论数
      * @param replyCount 每条评论获取的关联回复数
      */
-    List<CoreComment> getCommentsCarryRepliesByArticleIdBasedSlide(Integer sourceId, Integer sourceType, Integer index,
-                                   Integer commentCount, Integer replyCount);
+    List<CoreComment> getCommentsCarryRepliesBySourceIdBasedSlide(Integer sourceId, Integer sourceType, Integer index,
+                                                                  Integer commentCount, Integer replyCount);
 
     /**
      * 根据评论id获取所有关联回复
@@ -44,12 +45,12 @@ public interface HomeCommentReplyService {
      * 新增评论处理
      * @return 新增后的当前评论数据
      */
-    CoreComment addCommentPackProcessor(CommentAddDto commentAdd, HttpServletRequest request);
+    CoreComment addCommentPackProcessor(CommentAddDto commentAddDto, HttpServletRequest request);
 
     /**
      * 新增评论回复
-     * @return
+     * @return 新增后的当前回复数据
      */
-    CoreReply addCommentReplyPackProcessor();
+    CoreReply addCommentReplyPackProcessor(ReplyAddDto replyAddDto, HttpServletRequest request);
 
 }
