@@ -49,12 +49,8 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
     private Object initSourceAddCommentLogic(CoreComment comment){
         Object source = null;
         comment.setPassed(true);
+        source = initSourceExistLogic(comment.getSourceId(), comment.getSourceType());
         if (comment.getSourceType()==1){
-            // 评论的来源内容类型为文章，处理相应的评论封装
-            source = super.getArticleById(comment.getSourceId());
-            if (ObjectUtils.isEmpty(source)){
-                throw new BlogException("文章已不存在，请刷新。");
-            }
             // 转化为文章对象
             CoreArticle article =  ((CoreArticle)source);
             // 评论类型来源是文章，且文章的评论设置为需要审核通过评论才能显示
@@ -82,12 +78,8 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
             throw new BlogException("评论已不存在，请刷新。");
         }
         // 再检查关联的评论的文章
+        source = initSourceExistLogic(relatedComment.getSourceId(), relatedComment.getSourceType());
         if (relatedComment.getSourceType() == 1){
-            // 评论的来源内容类型为文章，处理相应的评论封装
-            source = super.getArticleById(relatedComment.getSourceId());
-            if (ObjectUtils.isEmpty(source)){
-                throw new BlogException("文章已不存在，请刷新。");
-            }
             // 转化为文章对象
             CoreArticle article =  ((CoreArticle)source);
             // 回复的关联文章的评论设置为需要审核通过评论才能显示
@@ -174,7 +166,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
     }
 
     @Override
-    public CoreReply addCommentReplyPackProcessor(ReplyAddDto replyAddDto, HttpServletRequest request) {
+    public CoreReply addReplyPackProcessor(ReplyAddDto replyAddDto, HttpServletRequest request) {
         CoreReply reply = ReplyAddDtoToReplyMapperUtils.INSTANCE.replyAddDtoToReply(replyAddDto);
         initSourceAddReplyLogic(reply);
         return this.replyRepository.save(reply);

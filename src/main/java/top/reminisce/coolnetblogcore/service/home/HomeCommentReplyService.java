@@ -51,6 +51,6 @@ public interface HomeCommentReplyService {
      * 新增评论回复
      * @return 新增后的当前回复数据
      */
-    CoreReply addCommentReplyPackProcessor(ReplyAddDto replyAddDto, HttpServletRequest request);
+    CoreReply addReplyPackProcessor(ReplyAddDto replyAddDto, HttpServletRequest request);
 
 }

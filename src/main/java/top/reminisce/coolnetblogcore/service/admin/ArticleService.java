@@ -14,7 +14,6 @@ import java.util.List;
 public interface ArticleService extends HomeArticleQueryService{
     /**
      * 获取可被客户端查看到的所有文章，不包括草稿。从mysql中获取，而不是elasticsearch
-     * @return
      */
     List<CoreArticle> getAllViewAbleArticles();
 }

@@ -61,7 +61,7 @@ public class CommentReplyController {
      */
     @PostMapping({"reply"})
     public Result addReply(@RequestBody @Valid ReplyAddDto replyAdd, @NotNull HttpServletRequest request){
-        CoreReply reply = homeCommentReplyService.addCommentReplyPackProcessor(replyAdd, request);
+        CoreReply reply = homeCommentReplyService.addReplyPackProcessor(replyAdd, request);
         return ResultPack.fluent(reply);
     }
 }

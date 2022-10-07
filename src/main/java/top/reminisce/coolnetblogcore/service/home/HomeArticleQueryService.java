@@ -4,7 +4,6 @@ import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.service.BaseService;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
