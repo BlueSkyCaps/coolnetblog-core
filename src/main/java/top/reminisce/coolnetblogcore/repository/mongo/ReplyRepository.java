@@ -6,10 +6,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.common.BlogException;
+import top.reminisce.coolnetblogcore.exception.BlogException;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreReply;
+import top.reminisce.coolnetblogcore.repository.BaseMongoTemplateRepository;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
  * @date 2022/10/2
  */
 
-public interface ReplyRepository extends MongoRepository<CoreReply, Integer> {
+public interface ReplyRepository extends MongoRepository<CoreReply, Integer>, BaseMongoTemplateRepository {
     /**
      * 获取指定评论id获取关联回复，使用分页
      * @param commentId 评论id

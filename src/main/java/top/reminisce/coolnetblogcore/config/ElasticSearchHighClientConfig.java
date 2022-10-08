@@ -22,8 +22,8 @@ public class ElasticSearchHighClientConfig extends AbstractElasticsearchConfigur
     private ElasticSearchConfigProperties elasticSearchConfigProperties;
 
     @NotNull
-    @Override
     @Bean
+    @Override
     public RestHighLevelClient elasticsearchClient() {
         final ClientConfiguration clientConfiguration = ClientConfiguration.builder()
             .connectedTo(elasticSearchConfigProperties.getHostAndPort())

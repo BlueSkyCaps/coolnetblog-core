@@ -3,25 +3,31 @@ package top.reminisce.coolnetblogcore.service.home.impl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import top.reminisce.coolnetblogcore.common.BlogException;
+import top.reminisce.coolnetblogcore.exception.BlogException;
+import top.reminisce.coolnetblogcore.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.dto.CommentAddDto;
 import top.reminisce.coolnetblogcore.pojo.dto.ReplyAddDto;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreComment;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreReply;
+import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.repository.mongo.CommentRepository;
 import top.reminisce.coolnetblogcore.repository.mongo.ReplyRepository;
 import top.reminisce.coolnetblogcore.service.home.HomeCommentReplyService;
 import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQueryService;
+import top.reminisce.coolnetblogcore.util.PathUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
 import top.reminisce.coolnetblogcore.util.mapperConvert.CommentAddDtoToCommentMapperUtils;
 import top.reminisce.coolnetblogcore.util.mapperConvert.ReplyAddDtoToReplyMapperUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,7 +81,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
         // 检查关联的评论
         CoreComment relatedComment = commentRepository.findById(relatedCid).orElse(null);
         if (relatedComment == null) {
-            throw new BlogException("评论已不存在，请刷新。");
+            throw new BlogNotExistExceptionTips("评论已不存在，请刷新。");
         }
         // 再检查关联的评论的文章
         source = initSourceExistLogic(relatedComment.getSourceId(), relatedComment.getSourceType());
@@ -126,7 +132,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
             // 评论的来源内容类型为文章，处理相应的评论封装
             source = super.getArticleById(sourceId);
             if (ObjectUtils.isEmpty(source)){
-                throw new BlogException("文章已不存在，请刷新。");
+                throw new BlogNotExistExceptionTips("文章已不存在，请刷新。");
             }
         }
         return source;
@@ -160,6 +166,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
 
     @Override
     public CoreComment addCommentPackProcessor(CommentAddDto commentAddDto, HttpServletRequest request) {
+        leaveLimitCountCheck(request);
         CoreComment comment = CommentAddDtoToCommentMapperUtils.INSTANCE.commentAddDtoToComment(commentAddDto);
         initSourceAddCommentLogic(comment);
         return this.commentRepository.save(comment);
@@ -167,8 +174,36 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
 
     @Override
     public CoreReply addReplyPackProcessor(ReplyAddDto replyAddDto, HttpServletRequest request) {
+        leaveLimitCountCheck(request);
         CoreReply reply = ReplyAddDtoToReplyMapperUtils.INSTANCE.replyAddDtoToReply(replyAddDto);
         initSourceAddReplyLogic(reply);
         return this.replyRepository.save(reply);
+    }
+
+    /**
+     * 检查当前客户端ip当日的评论回复数是否超过设置的每日限制数
+     */
+    private void leaveLimitCountCheck(HttpServletRequest request){
+        CoreSysAdmin coreSysAdmin = super.getSettingExcludeSecurity();
+        Integer leaveLimitCount = coreSysAdmin.getSiteSetting().getLeaveLimitCount();
+        if (leaveLimitCount==null || leaveLimitCount<=0){
+            return;
+        }
+        String ip = PathUtils.getClientSourceIp(request);
+        Date nowDate;
+        try {
+            nowDate = TimeUtils.dateExcludeTime(TimeUtils.currentDateTime());
+        } catch (ParseException e) {
+            throw new BlogException("检查当日IP评论限制数：获取当前日期异常。" + e.getMessage());
+        }
+        Date nextDate = TimeUtils.dateTimeOffsetDay(nowDate, 1);
+        CriteriaDefinition criteria = new Criteria()
+            .and("clientIp").is(ip)
+            .and("commentTime").gt(nowDate)
+            .and("commentTime").lt(nextDate);
+        Integer cCount = this.commentRepository.conditionWhereCount(super.beanUtils.getMongoTemplate(), criteria, CoreComment.class);
+        Integer rCount = this.replyRepository.conditionWhereCount(super.beanUtils.getMongoTemplate(), criteria, CoreReply.class);
+        if (cCount+rCount>leaveLimitCount) {
+        }
     }
 }

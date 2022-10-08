@@ -34,17 +34,17 @@ public class ResultPack {
     }
 
     public static Result reject(String rejectMessage){
-        return new Result(rejectMessage, ResultStatus.FAIL, null, null);
+        return new Result(rejectMessage, ResultStatus.OTHER, null, null);
     }
     public static Result reject(String rejectMessage, StackTraceElement[] stackTrace){
-        return new Result(rejectMessage, ResultStatus.FAIL, null, stackTrace);
+        return new Result(rejectMessage, ResultStatus.OTHER, null, stackTrace);
     }
 
     public static Result reject(String rejectMessage, Object rejectTipBody){
-        return new Result(rejectMessage, ResultStatus.FAIL, rejectTipBody, null);
+        return new Result(rejectMessage, ResultStatus.OTHER, rejectTipBody, null);
     }
 
     public static Result reject(String rejectMessage, Object rejectTipBody, StackTraceElement[] stackTrace){
-        return new Result(rejectMessage, ResultStatus.FAIL, rejectTipBody, stackTrace);
+        return new Result(rejectMessage, ResultStatus.OTHER, rejectTipBody, stackTrace);
     }
 }

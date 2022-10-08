@@ -1,7 +1,7 @@
 package top.reminisce.coolnetblogcore.util;
 
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.common.BlogException;
+import top.reminisce.coolnetblogcore.exception.BlogException;
 
 import java.util.Objects;
 
@@ -29,7 +29,6 @@ public class ValidationUtils {
 
     /**
      * 验证文章搜索参数逻辑
-     *
      * @param from    来源动作，菜单还是关键词搜索
      * @param keyword 若来源是关键词搜索，则是关键词
      * @param menuId 若来源是菜单，则是菜单ID

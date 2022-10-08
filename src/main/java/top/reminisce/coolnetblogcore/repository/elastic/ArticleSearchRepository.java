@@ -14,7 +14,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.common.BlogException;
+import top.reminisce.coolnetblogcore.exception.BlogException;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 
 import java.util.List;
@@ -32,6 +32,14 @@ import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.ARTICLE_SEARC
  */
 public interface ArticleSearchRepository extends ElasticsearchRepository<ArticleSearch, String> {
 
+    static void initCheck(ElasticsearchRestTemplate template, ArticleSearch articleDoc){
+        if (Objects.isNull(template)) {
+            throw new BlogException("ElasticsearchRestTemplate必须不为null！");
+        }
+        if (Objects.isNull(articleDoc)) {
+            throw new BlogException("要插入的文章文档必须不为null！");
+        }
+    }
     /**
      * 获取属于MenuId的文章列表，采用分页。<br>
      * 约束仓储
@@ -47,12 +55,7 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
      * @return 生成的id
      */
     default String insertOne(ElasticsearchRestTemplate template, ArticleSearch articleDoc) {
-        if (Objects.isNull(template)) {
-            throw new BlogException("ElasticsearchRestTemplate必须不为null！");
-        }
-        if (Objects.isNull(articleDoc)) {
-            throw new BlogException("要插入的文章文档必须不为null！");
-        }
+        initCheck(template, articleDoc);
         IndexQuery indexDocumentQuery = new IndexQueryBuilder()
             .withId(articleDoc.getId())
             .withObject(articleDoc).build();
@@ -70,8 +73,8 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
         if (Objects.isNull(template)) {
             throw new BlogException("ElasticsearchRestTemplate必须不为null！");
         }
-        if (Objects.isNull(articleDocs) || articleDocs.isEmpty()) {
-            throw new BlogException("要插入的文章文档必须不为空！");
+        if (ObjectUtils.isEmpty(articleDocs)) {
+            throw new BlogException("要插入的文章文档列表必须不为空！");
         }
         List<IndexQuery> indexDocumentQueries = articleDocs.stream()
             .map(a -> new IndexQueryBuilder()

@@ -1,8 +1,10 @@
 package top.reminisce.coolnetblogcore.service.home.impl;
 
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.common.BlogException;
+import top.reminisce.coolnetblogcore.exception.BlogException;
 import top.reminisce.coolnetblogcore.pojo.dto.ThumbUpDto;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreThumbUp;
 import top.reminisce.coolnetblogcore.repository.mongo.ThumpUpRepository;
@@ -48,8 +50,12 @@ public class ThumbUpServiceImpl extends AbstractHomeQueryService implements Thum
     private void thumbUpEntityPack(CoreThumbUp thumbUp, HttpServletRequest request) {
         String currentIp = PathUtils.getClientSourceIp(request);
         // 验证当前ip是否点赞过此内容
-        boolean exists = this.thumpUpRepository.thumbUpAlreadyExists(super.beanUtils.getMongoTemplate(),
-            thumbUp.getSourceId(), thumbUp.getSourceType(), thumbUp.getClientIp());
+        CriteriaDefinition criteriaDefinition = new Criteria()
+            .and("sourceId").is(thumbUp.getSourceId())
+            .and("sourceType").is(thumbUp.getSourceType())
+            .and("ip").is(thumbUp.getClientIp());
+        boolean exists = this.thumpUpRepository
+            .conditionWhereAlreadyExists(super.beanUtils.getMongoTemplate(), criteriaDefinition, CoreThumbUp.class);
         if (exists){
             throw new RuntimeException("你已经点过赞啦，不要重复点赞~");
         }

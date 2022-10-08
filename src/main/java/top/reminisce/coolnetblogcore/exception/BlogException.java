@@ -1,4 +1,4 @@
-package top.reminisce.coolnetblogcore.common;
+package top.reminisce.coolnetblogcore.exception;
 
 /**
  * @author BlueSky

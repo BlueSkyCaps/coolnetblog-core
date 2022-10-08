@@ -60,7 +60,7 @@ public class HomeServiceImpl extends AbstractHomeArticleQueryService implements 
         // 获取菜单
         List<CoreMenu> treeMenus = getMenusToTree();
         // 获取站点配置
-        CoreSysAdmin coreSysAdmin = super.adminRepository.getOneExcludeSecurity(super.beanUtils.getMongoTemplate());
+        CoreSysAdmin coreSysAdmin = super.getSettingExcludeSecurity();
         /* 小组件 */
         if (coreSysAdmin.getSiteSetting().isShowLoveLook()){
             // 获取"看看这些"小组件

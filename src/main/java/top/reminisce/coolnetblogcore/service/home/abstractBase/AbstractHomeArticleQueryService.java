@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.common.BlogException;
+import top.reminisce.coolnetblogcore.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.repository.elastic.ArticleSearchRepository;
@@ -47,7 +47,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
     public List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex){
         ValidationUtils.searchArticlePramsCheck(from, keyword, menuId);
         // 从配置中获取设置的每页文章条数
-        Integer pageCountValue = super.adminRepository.getSettingPageCountValue(super.beanUtils.getMongoTemplate());
+        Integer pageCountValue = super.getSettingExcludeSecurity().getSiteSetting().getOnePageCount();
         ValidationUtils.pagePramsCheck(pageIndex, pageCountValue);
         // 开始根据动作来源检索文章数据。从elasticsearch
         return dealArticlePageDataByFrom(from, keyword, menuId, pageIndex, pageCountValue);
@@ -89,7 +89,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
             article = getArticleById(id);
         }
         if (article == null){
-            throw new BlogException("已获取不到此文章，请刷新。");
+            throw new BlogNotExistExceptionTips("已获取不到此文章，请刷新。");
         }
         return article;
     }
