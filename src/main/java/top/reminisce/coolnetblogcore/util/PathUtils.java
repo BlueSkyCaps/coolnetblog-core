@@ -43,7 +43,7 @@ public class PathUtils {
             }
         }
         if (ObjectUtils.isEmpty(ip)){
-            log.info("处理客户端发出的请求ip：当前上下文请求获取的ip为null");
+            // log.info("处理客户端发出的请求ip：当前上下文请求获取的ip为null");
             throw new BlogException("处理客户端发出的请求ip：当前上下文请求获取的ip为null");
         }
         return ip;

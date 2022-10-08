@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.common.ResultStatus;
 import top.reminisce.coolnetblogcore.exception.BlogException;
 import top.reminisce.coolnetblogcore.exception.BlogLeaveLimitExceptionTips;
+import top.reminisce.coolnetblogcore.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.service.BlogExceptionService;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class BlogExceptionServiceImpl implements BlogExceptionService {
      */
     private static final ArrayList<Class<? extends BlogException>> REASONABLE_BUSINESS_BLOG_EXCEPTION_ARRAY_LIST = new ArrayList<>();
     static {
-        REASONABLE_BUSINESS_BLOG_EXCEPTION_ARRAY_LIST.addAll(Arrays.asList(BlogLeaveLimitExceptionTips.class));
+        REASONABLE_BUSINESS_BLOG_EXCEPTION_ARRAY_LIST.addAll(Arrays.asList(
+            BlogLeaveLimitExceptionTips.class,
+            BlogNotExistExceptionTips.class
+        ));
     }
 }
