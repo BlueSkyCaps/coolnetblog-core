@@ -2,6 +2,7 @@ package top.reminisce.coolnetblogcore.service.home.impl;
 
 import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.common.ResultStatus;
+import top.reminisce.coolnetblogcore.exception.BlogAccountNotRightExceptionTips;
 import top.reminisce.coolnetblogcore.exception.BlogException;
 import top.reminisce.coolnetblogcore.exception.BlogLeaveLimitExceptionTips;
 import top.reminisce.coolnetblogcore.exception.BlogNotExistExceptionTips;
@@ -33,7 +34,8 @@ public class BlogExceptionServiceImpl implements BlogExceptionService {
     static {
         REASONABLE_BUSINESS_BLOG_EXCEPTION_ARRAY_LIST.addAll(Arrays.asList(
             BlogLeaveLimitExceptionTips.class,
-            BlogNotExistExceptionTips.class
+            BlogNotExistExceptionTips.class,
+            BlogAccountNotRightExceptionTips.class
         ));
     }
 }

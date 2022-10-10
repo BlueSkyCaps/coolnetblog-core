@@ -32,4 +32,13 @@ public abstract class AbstractHomeQueryService {
         return this.adminRepository.getAndExclude(this.beanUtils.getMongoTemplate(),
             "password", "token", "adminDetail");
     }
+
+    /**
+     * 获取完整的管理员和站点配置数据，根据accountName<br/>
+     * 此数据不会返回给前端，而是用于登录效验。
+     */
+    // todo 缓存 查
+    protected CoreSysAdmin getSetting(String accountName) {
+        return this.adminRepository.findByAccountName(accountName);
+    }
 }

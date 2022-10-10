@@ -1,7 +1,5 @@
 package top.reminisce.coolnetblogcore.config;
 
-import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
+import top.reminisce.coolnetblogcore.pojo.ElasticSearchConfigProperties;
 
 /**
  * ElasticSearch, Rest High Level Client配置类。使基于springboot集成，而不是直接使用独立的es官方RHLC
