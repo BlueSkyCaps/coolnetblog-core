@@ -78,5 +78,14 @@ public class TimeUtils {
         return calendar.getTime();
     }
 
-
+    /**
+     * 当前日期时间加指定毫秒
+     * @param time 毫秒
+     * @return 当前时间＋指定毫秒数的时间
+     */
+    public static Date timeLongAdd(long time){
+        Date date = new Date();
+        long l = date.getTime() + time;
+        return new Date(l);
+    }
 }

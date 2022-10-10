@@ -27,6 +27,7 @@ public abstract class AbstractHomeQueryService {
      * 获取管理员和站点配置数据，过滤隐私安全字段。
      * @return 不包含隐私字段的CoreSysAdmin
      */
+    // todo 缓存 查
     protected CoreSysAdmin getSettingExcludeSecurity() {
         return this.adminRepository.getAndExclude(this.beanUtils.getMongoTemplate(),
             "password", "token", "adminDetail");

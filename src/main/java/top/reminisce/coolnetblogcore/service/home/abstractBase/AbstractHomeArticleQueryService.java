@@ -94,6 +94,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         return article;
     }
 
+    // todo 缓存 查
     protected CoreArticle getArticleById(Integer id){
         return this.articleMapper.selectById(id);
     }

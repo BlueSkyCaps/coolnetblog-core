@@ -86,6 +86,7 @@ public class HomeServiceImpl extends AbstractHomeArticleQueryService implements 
         return this.gossipMapper.selectPage(page, qw).getRecords();
     }
 
+    // todo 缓存 查
     @Override
     public List<CoreLoveLook> getAllLoveLook() {
         return this.loveLookMapper.selectList(new LambdaQueryWrapper<CoreLoveLook>()
@@ -93,6 +94,7 @@ public class HomeServiceImpl extends AbstractHomeArticleQueryService implements 
     }
 
     @Override
+    // todo 缓存 查
     public List<CoreMenu> getMenusToTree() {
         // 查出所有菜单。排除不显示的菜单，并且按设置的OrderNumber升序，但主菜单（IsHome）要位于第一位。
         List<CoreMenu> menus = this.menuMapper.selectList(new LambdaQueryWrapper<CoreMenu>()
