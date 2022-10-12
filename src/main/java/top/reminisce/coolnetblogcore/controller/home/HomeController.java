@@ -3,8 +3,6 @@ package top.reminisce.coolnetblogcore.controller.home;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.reminisce.coolnetblogcore.common.ResultPack;
-import top.reminisce.coolnetblogcore.exception.BlogException;
-import top.reminisce.coolnetblogcore.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.vo.Result;
 import top.reminisce.coolnetblogcore.service.home.HomeGlobalNeedService;

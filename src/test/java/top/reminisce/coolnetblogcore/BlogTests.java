@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.web.WebAppConfiguration;
+import top.reminisce.coolnetblogcore.common.TimestampOffsetActually;
 import top.reminisce.coolnetblogcore.controller.home.HomeController;
 import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
 import top.reminisce.coolnetblogcore.util.JwtUtils;
@@ -70,9 +71,28 @@ class BlogTests {
         }
         Jws<Claims> claimsJws2 = JwtUtils.parseToken(secretStringHs256, token);
     }
+
+    @Test
+    void jwtTest2(){
+        Map<String, Object> a = new HashMap<String, Object>();
+        a.put("userId", "123");
+        a.put("userName", "nnn");
+        String secretStringHs256 = JwtUtils.genRandomSecretStringHs256();
+        String token = JwtUtils.createToken(secretStringHs256, "subjcet", "1", TimeUtils.timeLongAdd(2000), a);
+        Jws<Claims> claimsJws = JwtUtils.parseToken(secretStringHs256, token);
+        Jws<Claims> claimsJws2 = JwtUtils.parseToken(secretStringHs256+"aa", token);
+        System.out.println(claimsJws);
+    }
+
     @Test
     void  timeAddLongTest(){
         long l = new Date().getTime() - TimeUtils.timeLongAdd(1000).getTime();
         System.out.println(l);
+    }
+    @Test
+    void  TimestampActuallyTest(){
+        long value = TimestampOffsetActually.HALF_DAY.value();
+        System.out.println(value);
+        System.out.println(TimestampOffsetActually.valueOf(43200000L));
     }
 }

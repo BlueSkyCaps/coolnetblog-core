@@ -1,4 +1,4 @@
-package top.reminisce.coolnetblogcore.pojo;
+package top.reminisce.coolnetblogcore.config.springsecurity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,11 +12,17 @@ import java.util.Collection;
  * @date 2022/10/10
  */
 public class LoginUserInfo implements UserDetails {
+
+
     private final CoreSysAdmin sysAdmin;
 
     public LoginUserInfo(CoreSysAdmin sysAdmin) {
 
         this.sysAdmin = sysAdmin;
+    }
+
+    public CoreSysAdmin getSysAdmin() {
+        return sysAdmin;
     }
 
     @Override

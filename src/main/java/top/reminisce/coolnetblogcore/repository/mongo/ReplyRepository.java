@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreReply;
 import top.reminisce.coolnetblogcore.repository.BaseMongoTemplateRepository;
 

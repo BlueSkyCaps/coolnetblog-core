@@ -1,6 +1,8 @@
 spring:
   profiles:
     active: dev
+  mvc:
+    static-path-pattern: /static/**
 server:
   port: 8080
   servlet:

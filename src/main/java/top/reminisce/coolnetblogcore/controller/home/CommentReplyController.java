@@ -1,6 +1,7 @@
 package top.reminisce.coolnetblogcore.controller.home;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import top.reminisce.coolnetblogcore.common.ResultPack;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @RestController
 public class CommentReplyController {
+    @Qualifier("homeCommentReplyServiceImpl")
     @Autowired
     private HomeCommentReplyService homeCommentReplyService;
     /**

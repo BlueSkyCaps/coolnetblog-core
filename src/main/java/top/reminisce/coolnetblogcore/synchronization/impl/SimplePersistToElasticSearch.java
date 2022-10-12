@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.repository.elastic.ArticleSearchRepository;
-import top.reminisce.coolnetblogcore.service.admin.AdminService;
+import top.reminisce.coolnetblogcore.service.admin.AdminQueryService;
 import top.reminisce.coolnetblogcore.synchronization.PersistToElasticSearchSynchronizer;
 import top.reminisce.coolnetblogcore.util.bean.SpringBeanUtils;
 import top.reminisce.coolnetblogcore.util.mapperConvert.ArticleToArticleSearchMapperUtils;
@@ -22,7 +22,7 @@ public class SimplePersistToElasticSearch implements PersistToElasticSearchSynch
     @Autowired
     private ArticleSearchRepository articleSearchRepository;
     @Autowired
-    private AdminService adminService;
+    private AdminQueryService adminService;
     @Autowired
     protected SpringBeanUtils beanUtils;
 

@@ -2,7 +2,7 @@ package top.reminisce.coolnetblogcore.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

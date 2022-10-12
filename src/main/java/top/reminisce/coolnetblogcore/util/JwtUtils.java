@@ -19,6 +19,13 @@ import java.util.UUID;
  * @date 2022/10/10
  */
 public class JwtUtils {
+
+    /**
+     * 在当前服务器运行周期内可被使用的静态jwt密钥，用于生成和解析jwt。<br/>
+     * 可以调用 genRandomSecretStringHs256 生成新密钥用于生成jwt，见genRandomSecretStringHs256()
+     */
+    public static String AVAILABLE_JWT_SECRET_KEY = genRandomSecretStringHs256();
+
     /**
      * 生成 HMAC-SHA 算法搭配的密钥，>= 256 位。<br/>
      * 使用 io.jsonwebtoken.security.keys#secretKeyFor（SignatureAlgorithm）来创建一个密钥，
@@ -29,6 +36,8 @@ public class JwtUtils {
         SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         return Encoders.BASE64.encode(secretKey.getEncoded());
     }
+
+
     /**
      * 创建jwt，使用默认随机生成的密钥。
      * @return Map：生成的密钥secretString和token
@@ -85,7 +94,8 @@ public class JwtUtils {
      * @param claims 额为数据段
      * @return String token
      */
-    public static String createToken(String secretString, String subject, String id, Date expiration, Map<String, Object> claims){
+    public static String createToken(String secretString, String subject, String id, Date expiration,
+                                     Map<String, Object> claims){
         SecretKey key = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
             .setIssuer("god")

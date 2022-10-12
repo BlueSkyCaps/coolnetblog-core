@@ -14,7 +14,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 
 import java.util.List;

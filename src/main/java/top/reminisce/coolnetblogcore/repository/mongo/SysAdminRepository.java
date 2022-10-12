@@ -1,11 +1,9 @@
 package top.reminisce.coolnetblogcore.repository.mongo;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import top.reminisce.coolnetblogcore.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 
 import java.util.Objects;

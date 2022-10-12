@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.exception.BlogNotExistExceptionTips;
+import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.repository.elastic.ArticleSearchRepository;

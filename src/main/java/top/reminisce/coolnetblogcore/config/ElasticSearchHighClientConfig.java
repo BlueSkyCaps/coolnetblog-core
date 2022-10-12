@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
-import top.reminisce.coolnetblogcore.pojo.ElasticSearchConfigProperties;
+import top.reminisce.coolnetblogcore.pojo.ao.ElasticSearchConfigProperties;
 
 /**
  * ElasticSearch, Rest High Level Client配置类。使基于springboot集成，而不是直接使用独立的es官方RHLC

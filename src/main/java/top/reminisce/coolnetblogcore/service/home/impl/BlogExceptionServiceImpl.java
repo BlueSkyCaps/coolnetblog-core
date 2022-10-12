@@ -2,10 +2,10 @@ package top.reminisce.coolnetblogcore.service.home.impl;
 
 import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.common.ResultStatus;
-import top.reminisce.coolnetblogcore.exception.BlogAccountNotRightExceptionTips;
-import top.reminisce.coolnetblogcore.exception.BlogException;
-import top.reminisce.coolnetblogcore.exception.BlogLeaveLimitExceptionTips;
-import top.reminisce.coolnetblogcore.exception.BlogNotExistExceptionTips;
+import top.reminisce.coolnetblogcore.handler.exception.BlogAccountNotRightExceptionTips;
+import top.reminisce.coolnetblogcore.handler.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogLeaveLimitExceptionTips;
+import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.service.BlogExceptionService;
 
 import java.util.ArrayList;
@@ -28,7 +28,10 @@ public class BlogExceptionServiceImpl implements BlogExceptionService {
     /**
      * 允许的博客业务异常定义列表，此类异常被ControllerAdvice-BlogExceptionController捕获到时，
      * 用于进行放行包含非错误状态码（ResultStatus.OTHER）的响应体。<br>
-     * 如抛出BlogLeaveLimitException，表示当日某ip的评论留言数超出了设置的限制数，此类异常是正常的响应，且不应被日志进行错误的记录。
+     * 如，抛出BlogLeaveLimitException，表示当日某ip的评论留言数超出了设置的限制数，此类异常是正常的响应，且不应被日志进行错误的记录。<br>
+     * 如，抛出BlogNotExistExceptionTips，表示某条记录已不存在。<br>
+     * 如，抛出BlogAccountNotRightExceptionTips，表示请求的接口需要身份验证，但失败。<br>
+     * ......。
      */
     private static final ArrayList<Class<? extends BlogException>> REASONABLE_BUSINESS_BLOG_EXCEPTION_ARRAY_LIST = new ArrayList<>();
     static {

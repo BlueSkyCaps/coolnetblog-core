@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.pojo.dto.ThumbUpDto;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreThumbUp;
 import top.reminisce.coolnetblogcore.repository.mongo.ThumpUpRepository;

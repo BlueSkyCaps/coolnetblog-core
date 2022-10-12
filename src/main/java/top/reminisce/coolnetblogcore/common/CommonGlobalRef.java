@@ -2,8 +2,6 @@ package top.reminisce.coolnetblogcore.common;
 
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 
-import javax.print.attribute.standard.Finishings;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +13,7 @@ import java.util.List;
 
 public class CommonGlobalRef {
 
+    public static final String ACCOUNT_AT_NOT_RIGHT_TIPS = "用户名或密码错误！";
     public static final String SEARCH_ACTION_FROM_MENU = "menu";
     public static final String SEARCH_ACTION_FROM_KEYWORD = "keyword";
     /**

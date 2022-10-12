@@ -1,4 +1,4 @@
-package top.reminisce.coolnetblogcore.interceptor;
+package top.reminisce.coolnetblogcore.handler.interceptor;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

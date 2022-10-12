@@ -1,4 +1,4 @@
-package top.reminisce.coolnetblogcore.pojo;
+package top.reminisce.coolnetblogcore.pojo.ao;
 
 import lombok.Getter;
 import lombok.Setter;

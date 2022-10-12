@@ -1,7 +1,7 @@
 package top.reminisce.coolnetblogcore.util;
 
 import org.springframework.util.ObjectUtils;
-import top.reminisce.coolnetblogcore.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 
 import java.util.Objects;
 
