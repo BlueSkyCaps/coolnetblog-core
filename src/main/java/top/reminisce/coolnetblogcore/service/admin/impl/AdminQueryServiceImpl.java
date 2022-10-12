@@ -45,7 +45,6 @@ public class AdminQueryServiceImpl extends AbstractAdminService implements Admin
 
 
     public AdminQueryServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper, GossipMapper gossipMapper) {
-
         this.menuMapper = menuMapper;
         this.loveLookMapper = loveLookMapper;
         this.gossipMapper = gossipMapper;

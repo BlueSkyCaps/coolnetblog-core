@@ -12,8 +12,6 @@ import java.util.Collection;
  * @date 2022/10/10
  */
 public class LoginUserInfo implements UserDetails {
-
-
     private final CoreSysAdmin sysAdmin;
 
     public LoginUserInfo(CoreSysAdmin sysAdmin) {

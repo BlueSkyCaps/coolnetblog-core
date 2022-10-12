@@ -9,9 +9,8 @@ import java.util.List;
  * @author BlueSky
  * @date 2022/10/1
  */
-public interface AdminQueryService extends FilePathService, FieldMapService, HomeArticleQueryService,
-    HomeCommentReplyService, HomeFieldMapQueryService,HomeMenuQueryService, HomeGossipQueryService,
-    HomeLoveLookQueryService {
+public interface AdminQueryService extends HomeArticleQueryService,HomeCommentReplyService,HomeMenuQueryService,
+    HomeGossipQueryService,HomeLoveLookQueryService, HomeFilePathService, HomeFieldMapQueryService{
     /**
      * 获取可被客户端查看到的所有文章，不包括草稿。从mysql中获取，而不是elasticsearch
      */
