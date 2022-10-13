@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.reminisce.coolnetblogcore.common.ResultPack;
 import top.reminisce.coolnetblogcore.pojo.dto.LoginDto;
+import top.reminisce.coolnetblogcore.pojo.dto.ResetPasswordDto;
 import top.reminisce.coolnetblogcore.pojo.vo.Result;
 import top.reminisce.coolnetblogcore.service.admin.AdminActionStatusService;
 
@@ -37,7 +38,16 @@ public class AdminSecurityController {
      * @return Result数据体
      */
     @PostMapping({"logout"})
-    public Result adminLogout(@RequestBody @Valid LoginDto loginDto){
-        return ResultPack.fluent("已注销。", this.adminActionStatusService.logoutAction(loginDto));
+    public Result adminLogout(){
+        return ResultPack.fluent("已注销。", this.adminActionStatusService.logoutAction());
+    }
+
+    /**
+     * 重置密码接口
+     * @return Result数据体
+     */
+    @PostMapping({"reset"})
+    public Result adminReset(ResetPasswordDto dto){
+        return ResultPack.fluent("已重置。", this.adminActionStatusService.resetAction(dto));
     }
 }

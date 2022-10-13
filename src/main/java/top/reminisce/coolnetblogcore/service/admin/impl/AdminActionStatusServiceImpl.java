@@ -12,8 +12,15 @@ import top.reminisce.coolnetblogcore.common.TimestampOffsetActually;
 import top.reminisce.coolnetblogcore.config.springsecurity.LoginUserInfo;
 import top.reminisce.coolnetblogcore.handler.exception.BlogAccountNotRightExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.dto.LoginDto;
+import top.reminisce.coolnetblogcore.pojo.dto.ResetPasswordDto;
+import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.service.admin.AdminActionStatusService;
+import top.reminisce.coolnetblogcore.service.admin.AdminQueryService;
+import top.reminisce.coolnetblogcore.service.admin.AdminSaveService;
+import top.reminisce.coolnetblogcore.service.admin.abstractBase.AbstractAdminService;
+import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeQueryService;
 import top.reminisce.coolnetblogcore.util.JwtUtils;
+import top.reminisce.coolnetblogcore.util.SecurityPasswordUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
 
 import java.util.Objects;
@@ -31,6 +38,10 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private AdminSaveService adminSaveService;
+    @Autowired
+    private AdminQueryService adminQueryService;
     @Override
     public Object loginAction(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -56,7 +67,7 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
     }
 
     @Override
-    public Object logoutAction(LoginDto loginDto) {
+    public Object logoutAction() {
         // 从当前SecurityContext获取当前的用户信息
         LoginUserInfo principal = (LoginUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         // 添加到缓存中 表示此token代表的用户已经注销 下次使用此token便无效，需要重新登录
@@ -65,7 +76,14 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
     }
 
     @Override
-    public Object resetAction(LoginDto loginDto) {
-        return null;
+    public Object resetAction(ResetPasswordDto resetPasswordDto) {
+        CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl)(this.adminQueryService)).getSetting(resetPasswordDto.getAccountName());
+        // 设置新的账户名和密码
+        sysAdmin.setAccountName(resetPasswordDto.getNewAccountName());
+        String genNewPassword = SecurityPasswordUtils.genBcryptPassword(resetPasswordDto.getPassword());
+        sysAdmin.setPassword(genNewPassword);
+        // 调用admin服务层进行最终保存
+        this.adminSaveService.saveSysAdmin(sysAdmin);
+        return true;
     }
 }

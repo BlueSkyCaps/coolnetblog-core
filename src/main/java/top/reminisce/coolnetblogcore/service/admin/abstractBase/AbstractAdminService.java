@@ -26,5 +26,4 @@ public abstract class AbstractAdminService extends AbstractHomeQueryService {
      */
     @Autowired
     protected ArticleMapper articleMapper;
-
 }
