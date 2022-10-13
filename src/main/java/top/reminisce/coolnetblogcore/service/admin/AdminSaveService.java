@@ -18,16 +18,10 @@ public interface AdminSaveService extends BaseService {
     CoreSysAdmin saveSetting(CoreSysAdmin sysAdmin);
 
     /**
-     * 更新菜单
+     * 更新菜单或新增菜单
      * @param menu 菜单数据
      */
-    CoreMenu updateMenu(CoreMenu menu);
-
-    /**
-     * 新增菜单
-     * @param menu 菜单数据
-     */
-    CoreMenu addMenu(CoreMenu menu);
+    CoreMenu saveMenuWheel(CoreMenu menu);
 
     /**
      * 删除菜单

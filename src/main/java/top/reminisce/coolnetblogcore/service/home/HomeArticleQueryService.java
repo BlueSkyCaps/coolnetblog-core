@@ -11,6 +11,7 @@ import java.util.List;
  * @date 2022/10/1
  */
 public interface HomeArticleQueryService extends BaseService {
+
     /**
      * 根据情况获取文章详情，要么提供了自定义uri，要么就是id
      * @param custUri 文章设置的uri
@@ -30,5 +31,5 @@ public interface HomeArticleQueryService extends BaseService {
      * @param menuId 菜单id，若提供
      * @param pageIndex 页码
      */
-    List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex);
+    List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex, boolean includeDraft);
 }

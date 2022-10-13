@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.reminisce.coolnetblogcore.common.ResultPack;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.pojo.vo.Result;
 import top.reminisce.coolnetblogcore.service.home.HomeGlobalNeedService;
 import top.reminisce.coolnetblogcore.service.home.impl.HomeServiceImpl;
@@ -42,10 +43,21 @@ public class HomeController {
      */
     @GetMapping({"article"})
     public Result getArticles(String from, String keyword, Integer menuId, Integer pageIndex){
-        List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, menuId, pageIndex);
+        List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, menuId,
+            pageIndex, false);
         return ResultPack.fluent(searchArticles);
     }
 
+    /**
+     * 获取所有菜单
+     * @return Result数据体
+     */
+    @GetMapping({"menu"})
+    public Result getMenus(){
+        // 获取"闲言碎语"小组件
+        List<CoreMenu> menus = homeService.getMenusToTree();
+        return ResultPack.fluent(menus);
+    }
 
     /**
      * 分页获取获取"闲言碎语"小组件数据

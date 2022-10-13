@@ -44,7 +44,8 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
 
 
     @Override
-    public List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex){
+    public List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex,
+                                              boolean includeDraft){
         ValidationUtils.searchArticlePramsCheck(from, keyword, menuId);
         // 从配置中获取设置的每页文章条数
         Integer pageCountValue = super.getSettingExcludeSecurity().getSiteSetting().getOnePageCount();

@@ -41,4 +41,5 @@ public abstract class AbstractHomeQueryService {
     public CoreSysAdmin getSetting(String accountName) {
         return this.adminRepository.findByAccountName(accountName);
     }
+
 }
