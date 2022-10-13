@@ -84,6 +84,8 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
         sysAdmin.setPassword(genNewPassword);
         // 调用admin服务层进行最终保存
         this.adminSaveService.saveSysAdmin(sysAdmin);
+        // 保存成功 主动注销
+        this.logoutAction();
         return true;
     }
 }
