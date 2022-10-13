@@ -1,9 +1,11 @@
 package top.reminisce.coolnetblogcore.controller.home;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import top.reminisce.coolnetblogcore.common.ResultPack;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
 import top.reminisce.coolnetblogcore.pojo.vo.Result;
 import top.reminisce.coolnetblogcore.service.home.HomeGlobalNeedService;
 import top.reminisce.coolnetblogcore.service.home.impl.HomeServiceImpl;
@@ -42,5 +44,17 @@ public class HomeController {
     public Result getArticles(String from, String keyword, Integer menuId, Integer pageIndex){
         List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, menuId, pageIndex);
         return ResultPack.fluent(searchArticles);
+    }
+
+
+    /**
+     * 分页获取获取"闲言碎语"小组件数据
+     * @return Result数据体
+     */
+    @GetMapping({"gossip/{pageIndex}"})
+    public Result getGossips(@PathVariable Integer pageIndex, Integer pageCount){
+        // 获取"闲言碎语"小组件
+        List<CoreGossip> gossips = homeService.getGossipBySlide(pageIndex, pageCount);
+        return ResultPack.fluent(gossips);
     }
 }

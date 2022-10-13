@@ -36,8 +36,8 @@ public class CommentReplyController {
      * @return Result数据体 评论以及携带的回复的列表
      */
     @GetMapping({"source/{sourceType}/{sourceId}/comment"})
-    public Result getDetail(@PathVariable Integer sourceId, @PathVariable Integer sourceType, @NotNull Integer pageIndex,
-                            @Value("10") Integer commentCount, @Value("10") Integer replyCount){
+    public Result getComments(@PathVariable Integer sourceId, @PathVariable Integer sourceType, @NotNull Integer pageIndex,
+                              @Value("10") Integer commentCount, @Value("10") Integer replyCount){
         List<CoreComment> commentsCarryRepliesByArticleIdBasedSlide = homeCommentReplyService
             .getCommentsCarryRepliesBySourceIdBasedSlide(sourceId, sourceType, pageIndex, commentCount, replyCount);
         return ResultPack.fluent(commentsCarryRepliesByArticleIdBasedSlide);

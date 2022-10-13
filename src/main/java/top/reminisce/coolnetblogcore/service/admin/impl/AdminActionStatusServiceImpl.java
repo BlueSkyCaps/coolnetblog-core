@@ -17,8 +17,6 @@ import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.service.admin.AdminActionStatusService;
 import top.reminisce.coolnetblogcore.service.admin.AdminQueryService;
 import top.reminisce.coolnetblogcore.service.admin.AdminSaveService;
-import top.reminisce.coolnetblogcore.service.admin.abstractBase.AbstractAdminService;
-import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeQueryService;
 import top.reminisce.coolnetblogcore.util.JwtUtils;
 import top.reminisce.coolnetblogcore.util.SecurityPasswordUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
@@ -83,7 +81,7 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
         String genNewPassword = SecurityPasswordUtils.genBcryptPassword(resetPasswordDto.getPassword());
         sysAdmin.setPassword(genNewPassword);
         // 调用admin服务层进行最终保存
-        this.adminSaveService.saveSysAdmin(sysAdmin);
+        this.adminSaveService.saveSetting(sysAdmin);
         // 保存成功 主动注销
         this.logoutAction();
         return true;
