@@ -18,7 +18,7 @@ public interface AdminActionStatusService {
      *注销操作
      * @return
      */
-    Object logoutAction();
+    Object logoutAction(LoginDto loginDto);
     /**
      * 重置密码操作
      * @return

@@ -22,6 +22,7 @@ public class AdminSecurityController {
 
     @Autowired
     private AdminActionStatusService adminActionStatusService;
+
     /**
      * 登陆验证接口 若登录成功，返回token
      * @return Result数据体 包含token
@@ -29,5 +30,14 @@ public class AdminSecurityController {
     @PostMapping({"login"})
     public Result adminLogin(@RequestBody @Valid LoginDto loginDto){
         return ResultPack.fluent(this.adminActionStatusService.loginAction(loginDto));
+    }
+
+    /**
+     * 退出登录接口 注销
+     * @return Result数据体
+     */
+    @PostMapping({"logout"})
+    public Result adminLogout(@RequestBody @Valid LoginDto loginDto){
+        return ResultPack.fluent("已注销。", this.adminActionStatusService.logoutAction(loginDto));
     }
 }

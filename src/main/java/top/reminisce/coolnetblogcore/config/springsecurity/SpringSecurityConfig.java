@@ -1,5 +1,6 @@
 package top.reminisce.coolnetblogcore.config.springsecurity;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import top.reminisce.coolnetblogcore.handler.springsecurity.JwtAuthenticationPreferentialFilter;
 
 /**
  * 用于设置Spring Security相关的配置类
@@ -18,6 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private JwtAuthenticationPreferentialFilter jwtAuthenticationPreferentialFilter;
+
     /**
      * 配置Spring Security默认的登录密码加密和效验方式，取代明文存储。
      * @return PasswordEncoder Bean
@@ -52,6 +58,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests().antMatchers("/admin/login").anonymous().and()
             .authorizeRequests().antMatchers("/admin/**").authenticated().and()
             .authorizeRequests().antMatchers("/**").permitAll();
+        // 将自定义JWT认证过滤器添加到过滤器链中
+        http.addFilterBefore(jwtAuthenticationPreferentialFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     /**
