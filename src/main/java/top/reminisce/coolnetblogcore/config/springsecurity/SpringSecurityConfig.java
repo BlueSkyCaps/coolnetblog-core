@@ -48,6 +48,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
         /*
         * 配置请求身份规则:
         * /admin/login 需要匿名登录
