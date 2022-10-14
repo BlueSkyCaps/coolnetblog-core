@@ -43,5 +43,5 @@ public class CoreFilePath {
      * This field corresponds to the database column core_file_path.file_type
      *
      */
-    private String fileType;
+    private Integer fileType;
 }

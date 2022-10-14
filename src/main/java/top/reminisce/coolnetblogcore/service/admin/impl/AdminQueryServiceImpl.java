@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.*;
+import top.reminisce.coolnetblogcore.repository.sql.FilePathMapper;
 import top.reminisce.coolnetblogcore.repository.sql.GossipMapper;
 import top.reminisce.coolnetblogcore.repository.sql.LoveLookMapper;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
@@ -31,20 +32,26 @@ public class AdminQueryServiceImpl extends AbstractAdminService implements Admin
     /**
      * "看看这些"小组件数据访问层 -> sql based
      */
-    private final LoveLookMapper loveLookMapper;
+    protected final LoveLookMapper loveLookMapper;
     /**
      * "闲言碎语"小组件数据访问层 -> sql based
      */
-    private final GossipMapper gossipMapper;
+    protected final GossipMapper gossipMapper;
 
+    /**
+     * 文件信息数据访问层 -> sql based
+     */
+    protected final FilePathMapper filePathMapper;
+
+    @Qualifier("homeServiceImpl")
     @Autowired
-    @Qualifier("abstractHomeArticleQueryService")
     private  AbstractHomeArticleQueryService articleQueryService;
 
-    public AdminQueryServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper, GossipMapper gossipMapper) {
+    public AdminQueryServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper, GossipMapper gossipMapper, FilePathMapper filePathMapper) {
         this.menuMapper = menuMapper;
         this.loveLookMapper = loveLookMapper;
         this.gossipMapper = gossipMapper;
+        this.filePathMapper = filePathMapper;
     }
 
     @Override

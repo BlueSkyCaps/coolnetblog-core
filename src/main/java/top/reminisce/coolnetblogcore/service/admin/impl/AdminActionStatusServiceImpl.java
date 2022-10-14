@@ -1,6 +1,7 @@
 package top.reminisce.coolnetblogcore.service.admin.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -38,6 +39,7 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private AdminSaveService adminSaveService;
+    @Qualifier("adminQueryServiceImpl")
     @Autowired
     private AdminQueryService adminQueryService;
     @Override

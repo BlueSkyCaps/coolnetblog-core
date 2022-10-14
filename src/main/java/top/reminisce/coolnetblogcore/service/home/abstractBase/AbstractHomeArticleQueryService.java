@@ -27,9 +27,7 @@ import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.SEARCH_ACTION
  * @author BlueSky
  * @date 2022/10/2
  */
-@Component
 public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryService implements HomeArticleQueryService {
-
     /**
      * ArticleSearch数据访问层 -> elastic based
      */

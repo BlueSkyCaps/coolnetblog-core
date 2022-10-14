@@ -5,18 +5,28 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
-import top.reminisce.coolnetblogcore.pojo.po.sql.*;
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreFilePath;
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreLoveLook;
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
+import top.reminisce.coolnetblogcore.repository.sql.FilePathMapper;
 import top.reminisce.coolnetblogcore.repository.sql.GossipMapper;
 import top.reminisce.coolnetblogcore.repository.sql.LoveLookMapper;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
 import top.reminisce.coolnetblogcore.service.admin.AdminSaveService;
+import top.reminisce.coolnetblogcore.util.PathUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
 
-import java.text.ParseException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author BlueSky
@@ -25,8 +35,8 @@ import java.util.Objects;
 @Service
 public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements AdminSaveService {
 
-    public AdminSaveServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper, GossipMapper gossipMapper) {
-        super(menuMapper, loveLookMapper, gossipMapper);
+    public AdminSaveServiceImpl(MenuMapper menuMapper, LoveLookMapper loveLookMapper, GossipMapper gossipMapper, FilePathMapper filePathMapper) {
+        super(menuMapper, loveLookMapper, gossipMapper, filePathMapper);
     }
 
     // todo 缓存 更新
@@ -38,12 +48,12 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     @Transactional(rollbackFor = RuntimeException.class)
     public CoreMenu saveMenuWheel(CoreMenu menu) {
-        if (Objects.isNull(menu.getId()) && menu.getId() >0){
+        if (Objects.isNull(menu.getId()) && menu.getId() > 0) {
             return updateMenu(menu);
         }
         return addMenu(menu);
     }
-    
+
     private CoreMenu updateMenu(CoreMenu menu) {
         menuExistLogic(menu.getId());
         initSaveMenuLogic(menu);
@@ -62,33 +72,30 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     /**
      * 验证保存菜单逻辑
+     *
      * @param menu 要保存的菜单
      */
     private void initSaveMenuLogic(CoreMenu menu) {
         CoreMenu mObj;
-        if (menu.getIsHome() && menu.getPid() != 0){
+        if (menu.getIsHome() && menu.getPid() != 0) {
             throw new BlogException("主页菜单必须是顶级菜单。");
         }
-        if (! ObjectUtils.isEmpty(menu.getPid()) && menu.getPid() != 0){
+        if (!ObjectUtils.isEmpty(menu.getPid()) && menu.getPid() != 0) {
             mObj = super.menuMapper.selectById(menu.getPid());
-            if (Objects.isNull(mObj)){
+            if (Objects.isNull(mObj)) {
                 throw new BlogException("该菜单设置了上级菜单，但已不存在，请刷新。");
             }
-            if (mObj.getIsHome()){
+            if (mObj.getIsHome()) {
                 throw new BlogException("该菜单设置了上级菜单，但上级菜单属于主页菜单，主页菜单不能有子菜单。");
             }
         }
         Wrapper<CoreMenu> wrapper1 = new LambdaQueryWrapper<CoreMenu>().eq(CoreMenu::getName, menu.getName());
-        if (super.menuMapper.exists(wrapper1)){
+        if (super.menuMapper.exists(wrapper1)) {
             throw new BlogException("菜单名称已经存在");
         }
-        try {
-            menu.setUpdateTime(TimeUtils.currentDateTime());
-        } catch (ParseException e) {
-            throw new BlogException("保存菜单，设置更新时间失败。"+e.getMessage());
-        }
+        menu.setUpdateTime(TimeUtils.currentDateTime());
         // 若设置为主页菜单，则需要把之前的主页菜单重置
-        if (menu.getIsHome()){
+        if (menu.getIsHome()) {
             Wrapper<CoreMenu> wrapper2 = new LambdaQueryWrapper<CoreMenu>().eq(CoreMenu::getIsHome, true);
             CoreMenu homeMenu = super.menuMapper.selectOne(wrapper2);
             homeMenu.setIsHome(false);
@@ -98,15 +105,17 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     /**
      * 验证删除菜单逻辑
+     *
      * @param menu 要删除的菜单
      */
     private void initRemoveMenuLogic(CoreMenu menu) {
         Wrapper<CoreMenu> wrapper = new LambdaQueryWrapper<CoreMenu>().eq(CoreMenu::getPid, menu.getId());
-        if (super.menuMapper.exists(wrapper)){
+        if (super.menuMapper.exists(wrapper)) {
             throw new BlogException("该菜单还有子菜单，不允许删除。");
         }
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
     public void removeMenu(Integer menuId) {
         initRemoveMenuLogic(menuExistLogic(menuId));
@@ -117,39 +126,110 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     private CoreMenu menuExistLogic(Integer menuId) {
         CoreMenu menu1 = super.menuMapper.selectById(menuId);
-        if (Objects.isNull(menu1)){
+        if (Objects.isNull(menu1)) {
             throw new BlogNotExistExceptionTips("该菜单已不存在，请刷新。");
         }
         return menu1;
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
-    public CoreGossip addGossip(CoreGossip gossip) {
-        return null;
+    public void addGossip(CoreGossip gossip) {
+        gossip.setAddTime(TimeUtils.currentDateTime());
+        super.gossipMapper.insert(gossip);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
     public void removeGossip(Integer id) {
-
+        super.gossipMapper.deleteById(id);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
-    public CoreFilePath addFilePath(CoreFilePath filePath) {
-        return null;
+    public void addFilePath(CoreFilePath filePathObj, MultipartFile upFile) {
+        boolean exists = super.filePathMapper.exists(
+            new LambdaQueryWrapper<CoreFilePath>().eq(CoreFilePath::getHelpName, filePathObj.getHelpName()));
+        if (exists) {
+            throw new BlogNotExistExceptionTips("要上传的文件资源的名称已经存在。");
+        }
+        String saveAbsPathName = PathUtils.getCurrentProjectSourcePath();
+        String dbRefPath;
+        // 若类型是图片 保存到图片静态资源路径
+        if (filePathObj.getFileType() == 1) {
+            String nowDateDir = TimeUtils.getDateTimeTextUsePatten(TimeUtils.currentDateTime(), "yyyyMMdd");
+            dbRefPath = File.separator + Paths.get("static", "img", nowDateDir, filePathObj.getHelpName());
+        } else {
+            // 是非图片类型的文件
+            dbRefPath = File.separator + Paths.get("static", "link", filePathObj.getHelpName());
+        }
+        saveAbsPathName = Paths.get(saveAbsPathName, dbRefPath).toString();
+        // 截取文件类型后缀
+        String suffix = PathUtils.getFileNameSuffix(upFile.getOriginalFilename());
+        String saveFilePath = saveAbsPathName+"."+suffix;
+        if (Objects.isNull(suffix)){
+            throw new BlogException("你必须上传有明确类型后缀的文件。");
+        }
+        super.filePathMapper.insert(filePathObj);
+        File fileObj = new File(saveFilePath);
+        try {
+            upFile.transferTo(fileObj);
+        } catch (IOException e) {
+            throw new RuntimeException("保存文件到资源路径失败。"+e);
+        }
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
     public void removeFilePath(Integer id) {
-
+        CoreFilePath filePath = super.filePathMapper.selectById(id);
+        if (!Optional.ofNullable(filePath).isPresent()) {
+            throw new BlogNotExistExceptionTips("要删除的文件已不存在。");
+        }
+        // 组合实际文件绝对路径
+        String absPath = Paths.get(PathUtils.getCurrentProjectStaticResourcesPath(), filePath.getFileRelPath()).toString();
+        super.filePathMapper.deleteById(id);
+        boolean delete = new File(absPath).delete();
+        if (! delete){
+            throw new RuntimeException("删除文件失败，此文件无法被删除。参见 java.io.File#delete");
+        }
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
-    public CoreLoveLook addLoveLook(CoreLoveLook loveLook) {
-        return null;
+    public void addLoveLook(CoreLoveLook loveLook) {
+        CoreSysAdmin setting = super.getSetting(securityContextPrincipal().getUsername());
+        String domain = setting.getSiteSetting().getDomain();
+        if (!StringUtils.hasText(domain)) {
+            throw new BlogException("检测到未设置域名信息，请到‘站点设置’中填写你的服务器域名");
+        }
+        String link;
+        //1内部文章链接2上传的文件链接3外部链接
+        switch (loveLook.getLinkType()) {
+            case 1:
+                link = File.separator + Paths.get("detail", loveLook.getRelHref());
+                break;
+            case 2:
+                link = File.separator + Paths.get("static", "link", loveLook.getRelHref());
+                break;
+            case 3:
+                link = loveLook.getRelHref();
+                break;
+            default:
+                throw new BlogException("添加“看看这些”链接失败，链接类型没有得到匹配。");
+        }
+        loveLook.setRelHref(link);
+        loveLook.setAddTime(TimeUtils.currentDateTime());
+        super.loveLookMapper.insert(loveLook);
     }
 
+
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
     public void removeLoveLook(Integer id) {
-
+        if (Objects.isNull(super.loveLookMapper.selectById(id))) {
+            throw new BlogNotExistExceptionTips("删除的链接已不存在。");
+        }
     }
 }
+  

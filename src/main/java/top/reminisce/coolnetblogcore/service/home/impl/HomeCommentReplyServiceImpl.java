@@ -98,21 +98,13 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
     }
 
     private void packCommentEntity(CoreComment comment){
-        try {
-            comment.setCommentTime(TimeUtils.currentDateTime());
-        } catch (ParseException e) {
-            throw new RuntimeException("添加评论：设置当前评论日期失败。"+e.getMessage());
-        }
+        comment.setCommentTime(TimeUtils.currentDateTime());
         comment.setId(null);
         comment.setAdmin(false);
     }
 
     private void packReplyEntity(CoreReply reply){
-        try {
-            reply.setReplyTime(TimeUtils.currentDateTime());
-        } catch (ParseException e) {
-            throw new RuntimeException("添加回复：设置当前回复日期失败。"+e.getMessage());
-        }
+        reply.setReplyTime(TimeUtils.currentDateTime());
         reply.setId(null);
         reply.setAdmin(false);
     }
@@ -191,11 +183,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
         }
         String ip = PathUtils.getClientSourceIp(request);
         Date nowDate;
-        try {
-            nowDate = TimeUtils.dateExcludeTime(TimeUtils.currentDateTime());
-        } catch (ParseException e) {
-            throw new BlogException("检查当日IP评论限制数：获取当前日期异常。" + e.getMessage());
-        }
+        nowDate = TimeUtils.dateExcludeTime(TimeUtils.currentDateTime());
         Date nextDate = TimeUtils.dateTimeOffsetDay(nowDate, 1);
         CriteriaDefinition criteria = new Criteria()
             .and("clientIp").is(ip)

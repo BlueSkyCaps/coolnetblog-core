@@ -60,11 +60,7 @@ public class ThumbUpServiceImpl extends AbstractHomeQueryService implements Thum
             throw new RuntimeException("你已经点过赞啦，不要重复点赞~");
         }
         thumbUp.setClientIp(currentIp);
-        try {
-            thumbUp.setUpTime(TimeUtils.currentDateTime());
-        } catch (ParseException e) {
-            throw new RuntimeException("点赞：设置当前点赞日期失败。"+e.getMessage());
-        }
+        thumbUp.setUpTime(TimeUtils.currentDateTime());
     }
 
     @Override

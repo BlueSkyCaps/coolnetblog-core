@@ -1,6 +1,7 @@
 package top.reminisce.coolnetblogcore.synchronization.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
@@ -21,6 +22,7 @@ import java.util.*;
 public class SimplePersistToElasticSearch implements PersistToElasticSearchSynchronizer {
     @Autowired
     private ArticleSearchRepository articleSearchRepository;
+    @Qualifier("adminQueryServiceImpl")
     @Autowired
     private AdminQueryService adminService;
     @Autowired

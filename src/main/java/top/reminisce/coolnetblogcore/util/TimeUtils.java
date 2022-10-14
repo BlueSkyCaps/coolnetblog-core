@@ -1,6 +1,7 @@
 package top.reminisce.coolnetblogcore.util;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,8 +53,12 @@ public class TimeUtils {
      * 获取当前的日期
      * @return 当前日期对象 Date
      */
-    public static Date currentDateTime() throws ParseException {
-        return TimeUtils.dateTextConvertToDate(TimeUtils.currentDateTimeText());
+    public static Date currentDateTime() {
+        try {
+            return TimeUtils.dateTextConvertToDate(TimeUtils.currentDateTimeText());
+        } catch (ParseException e) {
+            throw new RuntimeException("TimeUtils 获取当前的日期失败。"+e.getMessage());
+        }
     }
 
     /**
@@ -61,9 +66,13 @@ public class TimeUtils {
      * YYYY-mm-dd 00:00:00
      * @return 日期对象 Date
      */
-    public static Date dateExcludeTime(Date date) throws ParseException {
+    public static Date dateExcludeTime(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_USUAL_PATTERN_EXCLUDE);
-        return dateTextConvertToDate(dateFormat.format(date));
+        try {
+            return dateTextConvertToDate(dateFormat.format(date));
+        } catch (ParseException e) {
+            throw new RuntimeException("TimeUtils 将日期转化为不包含时间的日期失败。"+e.getMessage());
+        }
     }
 
     /**
@@ -87,5 +96,28 @@ public class TimeUtils {
         Date date = new Date();
         long l = date.getTime() + time;
         return new Date(l);
+    }
+
+    /**
+     * 将日期格式化成指定的文本
+     * @param date 要格式化的日期
+     * @param patten 格式，必须是正确的日期格式化形式
+     * @return 日期 文本
+     */
+    public static String getDateTimeTextUsePatten(Date date, String patten){
+        if (! StringUtils.hasText(patten)){
+            throw new RuntimeException("patten is null");
+        }
+
+        if (ObjectUtils.isEmpty(date)){
+            throw new RuntimeException("date is null");
+        }
+        SimpleDateFormat dateFormat;
+        try {
+            dateFormat = new SimpleDateFormat(patten);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return dateFormat.format(date);
     }
 }

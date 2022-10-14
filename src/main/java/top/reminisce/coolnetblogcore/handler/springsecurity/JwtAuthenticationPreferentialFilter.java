@@ -2,6 +2,7 @@ package top.reminisce.coolnetblogcore.handler.springsecurity;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,7 @@ import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.*;
  */
 @Component
 public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
+    @Qualifier("adminQueryServiceImpl")
     @Autowired
     private AdminQueryService adminQueryService;
     @Autowired
