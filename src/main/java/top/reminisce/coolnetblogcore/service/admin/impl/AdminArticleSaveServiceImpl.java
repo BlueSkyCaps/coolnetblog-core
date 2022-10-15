@@ -1,7 +1,6 @@
 package top.reminisce.coolnetblogcore.service.admin.impl;
 
 import joptsimple.internal.Strings;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -11,11 +10,9 @@ import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
 import top.reminisce.coolnetblogcore.service.admin.AdminArticleSaveService;
-import top.reminisce.coolnetblogcore.service.admin.abstractBase.AbstractAdminService;
-import top.reminisce.coolnetblogcore.service.home.HomeArticleQueryService;
 import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQueryService;
-import top.reminisce.coolnetblogcore.service.home.impl.HomeServiceImpl;
 import top.reminisce.coolnetblogcore.util.TextStringUtils;
+import top.reminisce.coolnetblogcore.util.TimeUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,11 +41,23 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
 
     @Override
     public CoreArticle saveArticleWheel(CoreArticle article) {
-        initAddArticleLogic(article);
-        return null;
+        initArticleLogic(article);
+        if (ObjectUtils.isEmpty(article.getId()) || article.getId()==0){
+            super.articleMapper.insert(article);
+            return article;
+        }
+        super.articleMapper.updateById(article);
+        return article;
+        // todo 同步更新文章到elastic
     }
 
-    private void initAddArticleLogic(CoreArticle article) {
+    private void initArticleLogic(CoreArticle article) {
+        if (ObjectUtils.isEmpty(article.getId()) || article.getId()==0){
+            article.setCreateTime(TimeUtils.currentDateTime());
+        }else {
+            initArticleExistLogic(article.getId());
+        }
+        article.setUpdateTime(TimeUtils.currentDateTime());
         Optional<CoreMenu> menu = Optional.ofNullable(this.menuMapper.selectById(article.getMenuId()));
         if (! menu.isPresent()){
             throw new BlogNotExistExceptionTips("保存文章：对应菜单已不存在，请刷新");
@@ -70,10 +79,19 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
                 .collect(Collectors.toList());
             article.setLabels(Strings.join(strings, TextStringUtils.SPACE_VALUE));
         }
+
     }
 
+    private void initArticleExistLogic(Integer id){
+        if (! Optional.ofNullable(super.getArticleById(id)).isPresent()){
+            throw new BlogNotExistExceptionTips("文章已不存在，请刷新。");
+        }
+    }
     @Override
     public void removeArticle(Integer id) {
+        initArticleExistLogic(id);
+        super.articleMapper.deleteById(id);
+        // todo 删除文章关联评论，在mongodb; 同步删除文章搜索实体，在elastic
     }
 }
   
