@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CommonGlobalRef {
 
-    public static final String REDIS_LOGOUT_KEY_NAME = "logout::user::token";
+    public static final String REDIS_LOGOUT_KEY_NAME = "logout::users";
     public static final String ACCOUNT_USER_INVALID_TIPS = "用户名或密码错误！";
     public static final String ACCOUNT_TOKEN_INVALID_TIPS = "身份拒绝：无效的TOKEN。";
     public static final String ACCOUNT_LOGOUT_NOT_AT_TIPS = "身份拒绝：注销后，请重新登录。";

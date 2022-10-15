@@ -52,8 +52,8 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             throw new BlogAccountNotRightExceptionTips(ACCOUNT_TOKEN_INVALID_TIPS);
         }
-        // 从缓存中查找token是否已经注销过，注销的token已经无效，需要再次登陆验证
-        Boolean logout = this.stringRedisTemplate.opsForSet().isMember(REDIS_LOGOUT_KEY_NAME, token);
+        // 从缓存中查找当前账户是否已经注销过，注销需要再次登陆验证
+        Boolean logout = this.stringRedisTemplate.opsForSet().isMember(REDIS_LOGOUT_KEY_NAME, accountName);
         if (Boolean.TRUE.equals(logout)){
             throw new BlogAccountNotRightExceptionTips(ACCOUNT_LOGOUT_NOT_AT_TIPS);
         }
@@ -61,7 +61,7 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
         CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl) adminQueryService).getSetting(accountName);
         // 封装成UserDetails，并显式调用UsernamePasswordAuthenticationToken，设置当前请求为已验证的身份状态
         UsernamePasswordAuthenticationToken authenticated =
-            new UsernamePasswordAuthenticationToken(new LoginUserInfo(sysAdmin, token), null, null);
+            new UsernamePasswordAuthenticationToken(new LoginUserInfo(sysAdmin), null, null);
         /*
         * 将当前UserDetails用户信息，即已经验证通过的数据存入SecurityContext中，
         * 便于后续过滤器或请求方法获取（如登出操作时、执行具体接口方法需要获取当前上下文用户数据时..）

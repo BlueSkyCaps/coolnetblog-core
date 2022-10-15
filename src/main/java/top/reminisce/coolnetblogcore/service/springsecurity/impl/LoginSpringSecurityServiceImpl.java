@@ -28,6 +28,6 @@ public class LoginSpringSecurityServiceImpl extends AbstractHomeQueryService imp
         }
 
         //封装成UserDetails对象返回给后续spring security过滤器
-        return new LoginUserInfo(sysAdmin, null);
+        return new LoginUserInfo(sysAdmin);
     }
 }

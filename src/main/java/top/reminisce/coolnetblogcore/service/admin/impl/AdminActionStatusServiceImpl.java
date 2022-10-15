@@ -58,20 +58,23 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
 
         // 获取正确的已验证通过的UserDetails对象，即包裹着SysAdmin实体的LoginUserInfo
         LoginUserInfo principal = (LoginUserInfo)authenticate.getPrincipal();
-        /* 开始为当前登陆成功的管理员生成jwt 并封装数据 将token返回给客户端*/
         String accountName = principal.getUsername();
+        // 从缓存的注销集合中移除此账户名，若有。
+        this.stringRedisTemplate.opsForSet().remove(REDIS_LOGOUT_KEY_NAME, accountName);
+        /* 开始为当前登陆成功的管理员生成jwt 并封装数据 将token返回给客户端*/
         // 创建token，id为管理员账户名
         return JwtUtils.createToken(JwtUtils.AVAILABLE_JWT_SECRET_KEY,
             accountName, accountName,
             TimeUtils.timeLongAdd(TimestampOffsetActually.ONE_DAY.value()));
     }
 
+
     @Override
     public Object logoutAction() {
         // 从当前SecurityContext获取当前的用户信息
         LoginUserInfo principal = (LoginUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        // 添加到缓存中 表示此token代表的用户已经注销 下次使用此token便无效，需要重新登录
-        this.stringRedisTemplate.opsForSet().add(REDIS_LOGOUT_KEY_NAME, principal.getCarryToken());
+        // 添加到缓存中 表示此用户已经注销 后续请求即使使用有效的token，仍需要重新登录
+        this.stringRedisTemplate.opsForSet().add(REDIS_LOGOUT_KEY_NAME, principal.getUsername());
         return true;
     }
 

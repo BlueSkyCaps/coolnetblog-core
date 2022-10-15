@@ -13,14 +13,11 @@ import java.util.Collection;
  */
 public class LoginUserInfo implements UserDetails {
     private final CoreSysAdmin sysAdmin;
-    private final String carryToken;
 
-    public LoginUserInfo(CoreSysAdmin sysAdmin, String carryToken) {
+    public LoginUserInfo(CoreSysAdmin sysAdmin) {
 
         this.sysAdmin = sysAdmin;
-        this.carryToken = carryToken;
     }
-
 
     public CoreSysAdmin getSysAdmin() {
         return sysAdmin;
@@ -60,9 +57,5 @@ public class LoginUserInfo implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public String getCarryToken() {
-        return carryToken;
     }
 }
