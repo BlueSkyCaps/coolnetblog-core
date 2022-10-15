@@ -98,7 +98,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         return this.articleMapper.selectById(id);
     }
 
-    private CoreArticle getArticleByCustUri(String custUri){
+    protected CoreArticle getArticleByCustUri(String custUri){
         Wrapper<CoreArticle> wrapper = new LambdaQueryWrapper<CoreArticle>().eq(CoreArticle::getCustUri, custUri);
         return this.articleMapper.selectOne(wrapper);
     }

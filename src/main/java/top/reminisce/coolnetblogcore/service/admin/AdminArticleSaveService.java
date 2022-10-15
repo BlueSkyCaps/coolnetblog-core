@@ -12,18 +12,11 @@ import top.reminisce.coolnetblogcore.service.BaseService;
 public interface AdminArticleSaveService extends BaseService {
 
     /**
-     * 更新文章
+     * 新增或更新文章
      * @param article 文章内容
-     * @return 更新后的文章实体
+     * @return 保存后的文章实体
      */
-    CoreArticle updateArticle(CoreArticle article);
-
-    /**
-     * 新增文章
-     * @param article 文章内容
-     * @return 新增后的文章实体
-     */
-    CoreArticle addArticle(CoreArticle article);
+    CoreArticle saveArticleWheel(CoreArticle article);
 
     /**
      * 删除文章

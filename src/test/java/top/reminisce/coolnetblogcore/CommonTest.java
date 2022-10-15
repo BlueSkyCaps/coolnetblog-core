@@ -1,16 +1,22 @@
 package top.reminisce.coolnetblogcore;
 
+import joptsimple.internal.Strings;
 import lombok.var;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.StringUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.util.PathUtils;
+import top.reminisce.coolnetblogcore.util.TextStringUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static top.reminisce.coolnetblogcore.util.TimeUtils.getDateTimeTextUsePatten;
 
@@ -53,5 +59,15 @@ public class CommonTest {
         System.out.println(new File("static/img").getCanonicalPath());
 
 
+    }
+    @Test
+    void stringText(){
+        String a = "1    2  2       , ,  ,,  3";
+        if (StringUtils.hasText(a)){
+            List<String> strings = Arrays.stream(a.split(TextStringUtils.SPACE_VALUE))
+                .filter(s->! s.isEmpty()).distinct()
+                .collect(Collectors.toList());
+            System.out.println(Strings.join(strings, TextStringUtils.SPACE_VALUE));
+        }
     }
 }
