@@ -18,24 +18,30 @@ public interface AdminCommentReplySaveService extends BaseService {
      * @param comment 评论数据
      * @return 新增后的评论
      */
-    CoreComment addComment(CoreComment comment);
+    CoreComment addCommentByAdmin(CoreComment comment);
     /**
-     * 删除评论
-     * @param sourceId 源内容id
-     * @param commentId 评论id
+     * 删除某条评论及其所有回复
+     * @param id 评论id
      */
-    void removeComment(Integer sourceId, Integer commentId);
+    void removeComment(Integer id);
 
     /**
      * 新增回复
      * @param reply 回复数据
      * @return 新增后的回复
      */
-    CoreReply addReply(CoreReply reply);
+    CoreReply addReplyByAdmin(CoreReply reply);
     /**
-     * 删除回复
+     * 删除某条回复
      * @param id 回复id
-     * @param commentId 关联评论id
      */
-    void removeReply(Integer id, Integer commentId);
+    void removeReply(Integer id);
+
+    /**
+     * 删除某内容（文章）的所有关联评论以及评论关联的所有回复。<br/>
+     * 此方法通常在删除文章时被联动执行。
+     * @param sourceId 要删除的内容id，如文章id
+     * @param sourceType 内容类型，如文章为1
+     */
+    void removeSourceRelated(Integer sourceId, Integer sourceType);
 }

@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.ObjectUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -24,7 +25,7 @@ public interface BaseMongoTemplateRepository {
     }
     /**
      * 根据条件表达式对象的定义，查询相应记录是否存在：
-     * @param template 通常是由spring管控的数据访问层实现的Template对象，如MongoTemplate、ElasticsearchRestTemplate等
+     * @param template 通常是由spring管控的数据访问层实现的Template对象，如MongoTemplate
      * @param criteriaDefinition 条件表达式对象的定义
      * @param entityClass 实体对象类
      * @return true，存在匹配；false，无
@@ -39,7 +40,7 @@ public interface BaseMongoTemplateRepository {
 
     /**
      * 根据条件表达式对象的定义,查询匹配计数
-     * @param template 通常是由spring管控的数据访问层实现的Template对象，如MongoTemplate、ElasticsearchRestTemplate等
+     * @param template 通常是由spring管控的数据访问层实现的Template对象，如MongoTemplate
      * @param criteriaDefinition 条件表达式对象的定义
      * @return 匹配数
      */
@@ -48,5 +49,17 @@ public interface BaseMongoTemplateRepository {
         initCheck(template, entityClass);
         Query query = new Query(criteriaDefinition);
         return Math.toIntExact(template.count(query, entityClass));
+    }
+
+
+    /**
+     * 根据条件表达式对象的定义,返回匹配的数据列表
+     * @param template 通常是由spring管控的数据访问层实现的Template对象，如MongoTemplate
+     * @param query 条件对象
+     */
+    default List<?> conditionWhereFindData(MongoTemplate template,Query query,
+                                          Class<?> entityClass){
+        initCheck(template, entityClass);
+        return template.find(query, entityClass);
     }
 }

@@ -2,6 +2,7 @@ package top.reminisce.coolnetblogcore.service.admin.impl;
 
 import joptsimple.internal.Strings;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
@@ -90,8 +91,38 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
     @Override
     public void removeArticle(Integer id) {
         initArticleExistLogic(id);
-        super.articleMapper.deleteById(id);
-        // todo 删除文章关联评论，在mongodb; 同步删除文章搜索实体，在elastic
+        // 删除文章 从持久层sql
+        boolean next = removeArticleFromSql(id);
+        if (! next){
+            return;
+        }
+        // 删除文章 从es
+        removeArticleFromEs(id);
+        // 删除评论 从mongodb
+        removeArticleRelatedComment(id);
+    }
+
+    private void removeArticleRelatedComment(Integer id) {
+    }
+
+    // 删除文章 从elasticsearch
+    private void removeArticleFromEs(Integer id) {
+        super.articleSearchRepository.deleteById(id.toString());
+    }
+
+    /**
+     * 删除文章 从持久层sql
+     * @param id 文章id
+     * @return 成功删除 true 否则抛出回滚异常用于事务回滚
+     */
+    @Transactional(rollbackFor = RuntimeException.class)
+    public boolean removeArticleFromSql(Integer id) {
+        try {
+            super.articleMapper.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 }
   

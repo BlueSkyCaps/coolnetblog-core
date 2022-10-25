@@ -5,10 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
+import top.reminisce.coolnetblogcore.handler.exception.BlogLeaveLimitExceptionTips;
 import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.dto.CommentAddDto;
 import top.reminisce.coolnetblogcore.pojo.dto.ReplyAddDto;
@@ -26,19 +28,21 @@ import top.reminisce.coolnetblogcore.util.mapperConvert.CommentAddDtoToCommentMa
 import top.reminisce.coolnetblogcore.util.mapperConvert.ReplyAddDtoToReplyMapperUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 /**
+ * 前台评论回复实现类 用于获取评论、用户留言，但不包括删除的实现。删除操作请见实现类
+ * {@link top.reminisce.coolnetblogcore.service.admin.impl.AdminCommentReplySaveServiceImpl AdminCommentReplySaveServiceImpl}。
+ * @see top.reminisce.coolnetblogcore.service.admin.AdminCommentReplySaveService
  * @author BlueSky
  * @date 2022/10/1
  */
 @Service
 public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService implements HomeCommentReplyService {
 
-    private final CommentRepository commentRepository;
-    private final ReplyRepository replyRepository;
+    protected final CommentRepository commentRepository;
+    protected final ReplyRepository replyRepository;
 
     public HomeCommentReplyServiceImpl(CommentRepository commentRepository, ReplyRepository replyRepository) {
         this.commentRepository = commentRepository;
@@ -190,8 +194,13 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
             .and("commentTime").gt(nowDate)
             .and("commentTime").lt(nextDate);
         Integer cCount = this.commentRepository.conditionWhereCount(super.beanUtils.getMongoTemplate(), criteria, CoreComment.class);
+        criteria = new Criteria()
+            .and("clientIp").is(ip)
+            .and("replyTime").gt(nowDate)
+            .and("replyTime").lt(nextDate);
         Integer rCount = this.replyRepository.conditionWhereCount(super.beanUtils.getMongoTemplate(), criteria, CoreReply.class);
         if (cCount+rCount>leaveLimitCount) {
+            throw new BlogLeaveLimitExceptionTips("当日留言次数已用完，请第二日再来哦，谢谢！");
         }
     }
 }

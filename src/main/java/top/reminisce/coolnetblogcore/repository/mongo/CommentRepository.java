@@ -1,11 +1,14 @@
 package top.reminisce.coolnetblogcore.repository.mongo;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreComment;
 import top.reminisce.coolnetblogcore.repository.BaseMongoTemplateRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Comment数据访问层 处理评论 -> mongo based
@@ -23,5 +26,4 @@ public interface CommentRepository extends MongoRepository<CoreComment, Integer>
      * @return 分页获取到的评论列表
      */
     List<CoreComment> findBySourceIdAndSourceType(Integer sourceId, Integer sourceType, Pageable page);
-
 }
