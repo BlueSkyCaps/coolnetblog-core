@@ -2,6 +2,7 @@ package top.reminisce.coolnetblogcore.service.admin.impl;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreComment;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreReply;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * @author BlueSky
  * @date 2022/10/25
  */
+@Service
 public class AdminCommentReplySaveServiceImpl extends HomeCommentReplyServiceImpl implements AdminCommentReplySaveService {
     public AdminCommentReplySaveServiceImpl(CommentRepository commentRepository, ReplyRepository replyRepository) {
         super(commentRepository, replyRepository);

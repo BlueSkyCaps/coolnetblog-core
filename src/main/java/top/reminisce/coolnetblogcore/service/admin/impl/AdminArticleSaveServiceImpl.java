@@ -11,6 +11,7 @@ import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
 import top.reminisce.coolnetblogcore.service.admin.AdminArticleSaveService;
+import top.reminisce.coolnetblogcore.service.admin.AdminCommentReplySaveService;
 import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQueryService;
 import top.reminisce.coolnetblogcore.util.TextStringUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
@@ -32,12 +33,14 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
      * 菜单数据访问层 -> sql based
      */
     protected final MenuMapper menuMapper;
+    private final AdminCommentReplySaveService adminCommentReplySaveService;
 
 
 
-    public AdminArticleSaveServiceImpl(MenuMapper menuMapper) {
+    public AdminArticleSaveServiceImpl(MenuMapper menuMapper, AdminCommentReplySaveService adminCommentReplySaveService) {
         this.menuMapper = menuMapper;
 
+        this.adminCommentReplySaveService = adminCommentReplySaveService;
     }
 
     @Override
@@ -98,11 +101,12 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
         }
         // 删除文章 从es
         removeArticleFromEs(id);
-        // 删除评论 从mongodb
-        removeArticleRelatedComment(id);
+        // 删除评论和回复 从mongodb
+        removeArticleRelated(id);
     }
 
-    private void removeArticleRelatedComment(Integer id) {
+    private void removeArticleRelated(Integer sourceId) {
+        this.adminCommentReplySaveService.removeSourceRelated(sourceId, 1);
     }
 
     // 删除文章 从elasticsearch
