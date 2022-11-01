@@ -1,6 +1,5 @@
 package top.reminisce.coolnetblogcore.service.admin.impl;
 
-import com.sun.corba.se.impl.orbutil.concurrent.Sync;
 import joptsimple.internal.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +7,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
+import top.reminisce.coolnetblogcore.pojo.dto.ArticleDto;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreMenu;
 import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
@@ -17,6 +17,7 @@ import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArtic
 import top.reminisce.coolnetblogcore.synchronization.PersistToElasticSearchSynchronizer;
 import top.reminisce.coolnetblogcore.util.TextStringUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
+import top.reminisce.coolnetblogcore.util.mapperConvert.ArticleDtoToArticleMapperUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,8 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
     }
 
     @Override
-    public CoreArticle saveArticleWheel(CoreArticle article) {
+    public CoreArticle saveArticleWheel(ArticleDto articleDto) {
+        CoreArticle article = ArticleDtoToArticleMapperUtils.INSTANCE.articleDtoToArticleMapperUtils(articleDto);
         initArticleLogic(article);
         if (ObjectUtils.isEmpty(article.getId()) || article.getId()==0){
             super.articleMapper.insert(article);

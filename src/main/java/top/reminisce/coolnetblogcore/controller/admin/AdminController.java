@@ -15,6 +15,7 @@ import top.reminisce.coolnetblogcore.service.admin.AdminArticleSaveService;
 import top.reminisce.coolnetblogcore.service.admin.AdminSaveService;
 import top.reminisce.coolnetblogcore.service.admin.impl.AdminArticleSaveServiceImpl;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -27,23 +28,7 @@ import java.util.List;
 @RequestMapping("admin")
 public class AdminController {
     @Autowired
-    private AdminArticleSaveService adminArticleSaveService;
-
-    @Autowired
     private AdminSaveService adminSaveService;
-
-    /**
-     * 后台获取文章分页。<br/>
-     * 此接口与前台文章接口一致，但包含草稿。独立封装此接口，因为此接口需要后台认证下请求。<br>
-     * 参见
-     * {@link top.reminisce.coolnetblogcore.controller.home.HomeController#getArticles}
-     */
-    @GetMapping({"article"})
-    public Result getArticles(String from, String keyword, Integer menuId, Integer pageIndex){
-        List<ArticleSearch> searchArticles = ((AdminArticleSaveServiceImpl) adminArticleSaveService)
-            .searchArticles(from, keyword, menuId, pageIndex, true);
-        return ResultPack.fluent(searchArticles);
-    }
 
     /**
      * 后台删除一条“闲言碎语”
@@ -58,7 +43,7 @@ public class AdminController {
      * 后台新增一条“闲言碎语”
      */
     @PostMapping({"gossip"})
-    public Result addGossip(@RequestBody GossipAddDto gossipAddDto){
+    public Result addGossip(@RequestBody @Valid GossipAddDto gossipAddDto){
         this.adminSaveService.addGossip(gossipAddDto);
         return ResultPack.fluent("新增成功。");
     }
@@ -68,7 +53,7 @@ public class AdminController {
      * 后台保存站点配置
      */
     @PutMapping({"site/setting"})
-    public Result saveAdminSetting(@RequestBody SiteSettingDto siteSettingDto){
+    public Result saveAdminSetting(@RequestBody @Valid SiteSettingDto siteSettingDto){
         return ResultPack.fluent(this.adminSaveService.saveSiteSetting(siteSettingDto));
     }
 
@@ -85,7 +70,7 @@ public class AdminController {
      * 后台保存菜单
      */
     @PostMapping({"menu"})
-    public Result saveMenu(@RequestBody MenuDto menuDto){
+    public Result saveMenu(@RequestBody @Valid MenuDto menuDto){
         return ResultPack.fluent(this.adminSaveService.saveMenuWheel(menuDto));
     }
 
@@ -95,7 +80,7 @@ public class AdminController {
      * @param upFile 上传的文件
      */
     @PostMapping({"upload"})
-    public Result addFilePath(@RequestPart FilePathDto filePathDto, @RequestPart MultipartFile upFile){
+    public Result addFilePath(@RequestPart @Valid FilePathDto filePathDto, @RequestPart MultipartFile upFile){
         this.adminSaveService.addFilePath(filePathDto, upFile);
         return ResultPack.fluent("上传成功。");
     }
@@ -114,7 +99,7 @@ public class AdminController {
      * @param loveLookAddDto 看看这些"数据
      */
     @PostMapping({"love-look"})
-    public Result addLoveLook(LoveLookAddDto loveLookAddDto){
+    public Result addLoveLook(@RequestBody @Valid LoveLookAddDto loveLookAddDto){
         this.adminSaveService.addLoveLook(loveLookAddDto);
         return ResultPack.fluent("新增成功。");
     }

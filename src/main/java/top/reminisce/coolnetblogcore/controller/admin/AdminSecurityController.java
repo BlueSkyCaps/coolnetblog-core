@@ -47,7 +47,7 @@ public class AdminSecurityController {
      * @return Result数据体
      */
     @PostMapping({"reset"})
-    public Result adminReset(ResetPasswordDto dto){
+    public Result adminReset(@RequestBody @Valid ResetPasswordDto dto){
         return ResultPack.fluent("已重置。", this.adminActionStatusService.resetAction(dto));
     }
 }

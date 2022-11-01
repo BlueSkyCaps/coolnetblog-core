@@ -2,7 +2,6 @@ package top.reminisce.coolnetblogcore;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import lombok.var;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +13,6 @@ import top.reminisce.coolnetblogcore.pojo.ao.GlobalEachNeedData;
 import top.reminisce.coolnetblogcore.util.JwtUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
 
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
 
@@ -33,7 +31,7 @@ class BlogTests {
     }
     @Test
     void getMongoPageCountTest() {
-        homeController.getArticles("keyword", "aa", 1, 1);
+        homeController.getArticlesFromHome("keyword", "aa", 1, 1);
         System.out.println(data);
     }
 
