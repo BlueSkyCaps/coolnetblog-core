@@ -14,7 +14,7 @@ public interface AdminCommentReplySaveService extends BaseService {
 
 
     /**
-     * 新增评论
+     * 后台管理员新增评论
      * @param comment 评论数据
      * @return 新增后的评论
      */
@@ -26,7 +26,7 @@ public interface AdminCommentReplySaveService extends BaseService {
     void removeComment(Integer id);
 
     /**
-     * 新增回复
+     * 后台管理员新增回复
      * @param reply 回复数据
      * @return 新增后的回复
      */

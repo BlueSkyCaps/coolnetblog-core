@@ -1,5 +1,6 @@
 package top.reminisce.coolnetblogcore.service.admin.impl;
 
+import com.sun.corba.se.impl.orbutil.concurrent.Sync;
 import joptsimple.internal.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
 import top.reminisce.coolnetblogcore.service.admin.AdminArticleSaveService;
 import top.reminisce.coolnetblogcore.service.admin.AdminCommentReplySaveService;
 import top.reminisce.coolnetblogcore.service.home.abstractBase.AbstractHomeArticleQueryService;
+import top.reminisce.coolnetblogcore.synchronization.PersistToElasticSearchSynchronizer;
 import top.reminisce.coolnetblogcore.util.TextStringUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
 
@@ -32,15 +34,18 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
     /**
      * 菜单数据访问层 -> sql based
      */
-    protected final MenuMapper menuMapper;
+    private final MenuMapper menuMapper;
     private final AdminCommentReplySaveService adminCommentReplySaveService;
+    private final PersistToElasticSearchSynchronizer toElasticSearchSynchronizer;
 
 
 
-    public AdminArticleSaveServiceImpl(MenuMapper menuMapper, AdminCommentReplySaveService adminCommentReplySaveService) {
+    public AdminArticleSaveServiceImpl(MenuMapper menuMapper,
+                                       PersistToElasticSearchSynchronizer persistToElasticSearchSynchronizer,
+                                       AdminCommentReplySaveService adminCommentReplySaveService) {
         this.menuMapper = menuMapper;
-
         this.adminCommentReplySaveService = adminCommentReplySaveService;
+        this.toElasticSearchSynchronizer = persistToElasticSearchSynchronizer;
     }
 
     @Override
@@ -51,8 +56,16 @@ public class AdminArticleSaveServiceImpl extends AbstractHomeArticleQueryService
             return article;
         }
         super.articleMapper.updateById(article);
+        return SyncToElasticSearch(article);
+    }
+
+    /**
+     * 同步更新文章到elastic
+     * @param article 文章实体，转换为ArticleSearch存储到es
+     */
+    private CoreArticle SyncToElasticSearch(CoreArticle article) {
+        toElasticSearchSynchronizer.articleInsertSync(article);
         return article;
-        // todo 同步更新文章到elastic
     }
 
     private void initArticleLogic(CoreArticle article) {

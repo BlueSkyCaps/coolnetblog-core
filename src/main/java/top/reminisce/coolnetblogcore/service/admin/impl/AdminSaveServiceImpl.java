@@ -9,6 +9,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
+import top.reminisce.coolnetblogcore.pojo.ao.SiteSetting;
+import top.reminisce.coolnetblogcore.pojo.dto.*;
 import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreFilePath;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
@@ -21,6 +23,7 @@ import top.reminisce.coolnetblogcore.repository.sql.MenuMapper;
 import top.reminisce.coolnetblogcore.service.admin.AdminSaveService;
 import top.reminisce.coolnetblogcore.util.PathUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
+import top.reminisce.coolnetblogcore.util.mapperConvert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,13 +44,24 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     // todo 缓存 更新
     @Override
-    public CoreSysAdmin saveSetting(CoreSysAdmin sysAdmin) {
+    public CoreSysAdmin saveSysAdmin(CoreSysAdmin sysAdmin) {
         return super.adminRepository.save(sysAdmin);
+    }
+
+    @Override
+    public CoreSysAdmin saveSiteSetting(SiteSettingDto siteSettingDto) {
+        SiteSetting siteSetting = SiteSettingDtoToSiteSettingMapperUtils.INSTANCE
+            .siteSettingDtoToSiteSettingMapperUtils(siteSettingDto);
+        // 从当前SecurityContext获取当前的用户信息
+        CoreSysAdmin sysAdmin = super.getSysAdmin(securityContextPrincipal().getUsername());
+        sysAdmin.setSiteSetting(siteSetting);
+        return this.saveSysAdmin(sysAdmin);
     }
 
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public CoreMenu saveMenuWheel(CoreMenu menu) {
+    public CoreMenu saveMenuWheel(MenuDto menuDto) {
+        CoreMenu menu = MenuDtoToMenuMapperUtils.INSTANCE.menuDtoToMenu(menuDto);
         if (Objects.isNull(menu.getId()) && menu.getId() > 0) {
             return updateMenu(menu);
         }
@@ -134,7 +148,11 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     @Transactional(rollbackFor = RuntimeException.class)
     @Override
-    public void addGossip(CoreGossip gossip) {
+    public void addGossip(GossipAddDto gossipAddDto) {
+        CoreGossip gossip = GossipAddDtoToGossipMapperUtils.INSTANCE.gossipAddDtoToGossip(gossipAddDto);
+        if (gossip.getType()==2 && ! StringUtils.hasText(gossip.getImgUrl())){
+            throw new BlogException("添加一条闲言碎语：带图片的文本请传递图片地址");
+        }
         gossip.setAddTime(TimeUtils.currentDateTime());
         super.gossipMapper.insert(gossip);
     }
@@ -147,7 +165,8 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     @Transactional(rollbackFor = RuntimeException.class)
     @Override
-    public void addFilePath(CoreFilePath filePathObj, MultipartFile upFile) {
+    public void addFilePath(FilePathDto filePathDto, MultipartFile upFile) {
+        CoreFilePath filePathObj = FilePathDtoToFilePathMapperUtils.INSTANCE.filePathDtoToFilePath(filePathDto);
         boolean exists = super.filePathMapper.exists(
             new LambdaQueryWrapper<CoreFilePath>().eq(CoreFilePath::getHelpName, filePathObj.getHelpName()));
         if (exists) {
@@ -197,8 +216,9 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
 
     @Transactional(rollbackFor = RuntimeException.class)
     @Override
-    public void addLoveLook(CoreLoveLook loveLook) {
-        CoreSysAdmin setting = super.getSetting(securityContextPrincipal().getUsername());
+    public void addLoveLook(LoveLookAddDto loveLookAddDto) {
+        CoreLoveLook loveLook = LoveLookAddDtoToLoveLookMapperUtils.INSTANCE.loveLookAddDtoToLoveLookMapperUtils(loveLookAddDto);
+        CoreSysAdmin setting = super.getSysAdmin(securityContextPrincipal().getUsername());
         String domain = setting.getSiteSetting().getDomain();
         if (!StringUtils.hasText(domain)) {
             throw new BlogException("检测到未设置域名信息，请到‘站点设置’中填写你的服务器域名");

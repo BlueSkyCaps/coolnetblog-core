@@ -80,13 +80,13 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
 
     @Override
     public Object resetAction(ResetPasswordDto resetPasswordDto) {
-        CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl)(this.adminQueryService)).getSetting(resetPasswordDto.getAccountName());
+        CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl)(this.adminQueryService)).getSysAdmin(resetPasswordDto.getAccountName());
         // 设置新的账户名和密码
         sysAdmin.setAccountName(resetPasswordDto.getNewAccountName());
         String genNewPassword = SecurityPasswordUtils.genBcryptPassword(resetPasswordDto.getPassword());
         sysAdmin.setPassword(genNewPassword);
         // 调用admin服务层进行最终保存
-        this.adminSaveService.saveSetting(sysAdmin);
+        this.adminSaveService.saveSysAdmin(sysAdmin);
         // 保存成功 主动注销
         this.logoutAction();
         return true;

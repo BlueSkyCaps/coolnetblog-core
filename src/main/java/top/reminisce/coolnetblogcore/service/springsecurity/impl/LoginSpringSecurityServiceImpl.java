@@ -22,7 +22,7 @@ public class LoginSpringSecurityServiceImpl extends AbstractHomeQueryService imp
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        CoreSysAdmin sysAdmin = super.getSetting(username);
+        CoreSysAdmin sysAdmin = super.getSysAdmin(username);
         if (ObjectUtils.isEmpty(sysAdmin)){
             throw new BlogAccountNotRightExceptionTips(ACCOUNT_USER_INVALID_TIPS);
         }

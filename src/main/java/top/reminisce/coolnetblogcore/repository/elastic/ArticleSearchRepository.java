@@ -54,7 +54,7 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
      * @param articleDoc 文档
      * @return 生成的id
      */
-    default String insertOne(ElasticsearchRestTemplate template, ArticleSearch articleDoc) {
+    default String saveOne(ElasticsearchRestTemplate template, ArticleSearch articleDoc) {
         initCheck(template, articleDoc);
         IndexQuery indexDocumentQuery = new IndexQueryBuilder()
             .withId(articleDoc.getId())
@@ -69,7 +69,7 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
      * @param articleDocs 文档列表
      * @return 生成的文档对象的信息列表
      */
-    default List<IndexedObjectInformation> insertMany(ElasticsearchRestTemplate template, Set<ArticleSearch> articleDocs) {
+    default List<IndexedObjectInformation> saveMany(ElasticsearchRestTemplate template, Set<ArticleSearch> articleDocs) {
         if (Objects.isNull(template)) {
             throw new BlogException("ElasticsearchRestTemplate必须不为null！");
         }
@@ -92,12 +92,12 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
      * @param theId 提供的id
      * @return 生成的id
      */
-    default String insertOneBySuppliedId(ElasticsearchRestTemplate template, ArticleSearch articleDoc, String theId) {
+    default String saveOneBySuppliedId(ElasticsearchRestTemplate template, ArticleSearch articleDoc, String theId) {
         if (ObjectUtils.isEmpty(theId)){
             throw new BlogException("不自动生成id，id主动提供，但id为空！");
         }
         articleDoc.setId(theId);
-        return insertOne(template, articleDoc);
+        return saveOne(template, articleDoc);
     }
 
     /**

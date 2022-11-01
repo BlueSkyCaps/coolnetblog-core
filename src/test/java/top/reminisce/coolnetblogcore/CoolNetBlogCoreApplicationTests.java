@@ -70,7 +70,7 @@ class CoolNetBlogCoreApplicationTests {
         ArticleSearch articleSearch = new ArticleSearch();
         articleSearch.setAbstractMsg("测2");
         articleSearch.setContent("草草草草2");
-        repository.insertOne(template, articleSearch);
+        repository.saveOne(template, articleSearch);
 
     }
 }

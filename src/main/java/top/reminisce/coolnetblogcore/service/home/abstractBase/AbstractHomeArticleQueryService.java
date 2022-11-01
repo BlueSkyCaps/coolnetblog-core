@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
@@ -46,7 +45,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
                                               boolean includeDraft){
         ValidationUtils.searchArticlePramsCheck(from, keyword, menuId);
         // 从配置中获取设置的每页文章条数
-        Integer pageCountValue = super.getSettingExcludeSecurity().getSiteSetting().getOnePageCount();
+        Integer pageCountValue = super.getSysAdminExcludeSecurity().getSiteSetting().getOnePageCount();
         ValidationUtils.pagePramsCheck(pageIndex, pageCountValue);
         // 开始根据动作来源检索文章数据。从elasticsearch
         return dealArticlePageDataByFrom(from, keyword, menuId, pageIndex, pageCountValue);

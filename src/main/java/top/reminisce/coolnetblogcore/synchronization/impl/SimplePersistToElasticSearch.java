@@ -36,8 +36,14 @@ public class SimplePersistToElasticSearch implements PersistToElasticSearchSynch
             ArticleSearch articleSearch = ArticleToArticleSearchMapperUtils.INSTANCE.articleToArticleSearch(article);
             insertArticleSearches.add(articleSearch);
         }
-        articleSearchRepository.insertMany(beanUtils.getElasticsearchRestTemplate(), insertArticleSearches);
+        articleSearchRepository.saveMany(beanUtils.getElasticsearchRestTemplate(), insertArticleSearches);
         return true;
     }
 
+    @Override
+    public boolean articleInsertSync(CoreArticle article){
+        ArticleSearch articleSearch = ArticleToArticleSearchMapperUtils.INSTANCE.articleToArticleSearch(article);
+        articleSearchRepository.saveOne(beanUtils.getElasticsearchRestTemplate(), articleSearch);
+        return true;
+    }
 }

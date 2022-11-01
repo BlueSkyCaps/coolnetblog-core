@@ -58,7 +58,7 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
             throw new BlogAccountNotRightExceptionTips(ACCOUNT_LOGOUT_NOT_AT_TIPS);
         }
         // 从缓存中获取配置
-        CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl) adminQueryService).getSetting(accountName);
+        CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl) adminQueryService).getSysAdmin(accountName);
         // 封装成UserDetails，并显式调用UsernamePasswordAuthenticationToken，设置当前请求为已验证的身份状态
         UsernamePasswordAuthenticationToken authenticated =
             new UsernamePasswordAuthenticationToken(new LoginUserInfo(sysAdmin), null, null);

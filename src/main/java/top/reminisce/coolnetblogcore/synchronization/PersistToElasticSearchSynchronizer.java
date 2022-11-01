@@ -1,5 +1,7 @@
 package top.reminisce.coolnetblogcore.synchronization;
 
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
+
 /**
  * @author BlueSky
  * @date 2022/10/2
@@ -11,4 +13,11 @@ public interface PersistToElasticSearchSynchronizer extends BlogSynchronizer{
      * @return true 完成；false，引发错误。
      */
     boolean articlesInsertInFullSync();
+
+    /**
+     * mysql中的一个文章实体新增到elasticsearch索引中<br/>
+     * @return true 完成；false，引发错误。
+     */
+    boolean articleInsertSync(CoreArticle article);
+
 }

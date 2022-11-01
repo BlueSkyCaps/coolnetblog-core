@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -180,7 +179,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
      * 检查当前客户端ip当日的评论回复数是否超过设置的每日限制数
      */
     private void leaveLimitCountCheck(HttpServletRequest request){
-        CoreSysAdmin coreSysAdmin = super.getSettingExcludeSecurity();
+        CoreSysAdmin coreSysAdmin = super.getSysAdminExcludeSecurity();
         Integer leaveLimitCount = coreSysAdmin.getSiteSetting().getLeaveLimitCount();
         if (leaveLimitCount==null || leaveLimitCount<=0){
             return;

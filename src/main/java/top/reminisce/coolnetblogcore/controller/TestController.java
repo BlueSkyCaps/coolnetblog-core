@@ -1,13 +1,20 @@
 package top.reminisce.coolnetblogcore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import top.reminisce.coolnetblogcore.common.ResultPack;
+import top.reminisce.coolnetblogcore.pojo.dto.ThumbUpDto;
+import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreThumbUp;
+import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
+import top.reminisce.coolnetblogcore.pojo.vo.Result;
+import top.reminisce.coolnetblogcore.service.home.HomeGlobalNeedService;
+import top.reminisce.coolnetblogcore.service.home.ThumbUpService;
+import top.reminisce.coolnetblogcore.service.home.impl.HomeServiceImpl;
 import top.reminisce.coolnetblogcore.util.PathUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.nio.file.Paths;
 
 /**
@@ -24,4 +31,5 @@ public class TestController {
 
         return Paths.get(PathUtils.getCurrentProjectStaticResourcesPath(), "/static/img/abc.jpg").toString();
     }
+
 }

@@ -13,6 +13,7 @@ import top.reminisce.coolnetblogcore.service.home.impl.HomeCommentReplyServiceIm
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,11 @@ public class AdminCommentReplySaveServiceImpl extends HomeCommentReplyServiceImp
 
     @Override
     public void removeComment(Integer id) {
-
+        super.commentRepository.deleteById(id);
+        // 根据评论删关联回复
+        List<Integer> needToDelRids = super.replyRepository
+            .finRidBasedRelatedCommentIdsIn(super.beanUtils.getMongoTemplate(), Collections.singletonList(id));
+        super.replyRepository.deleteAllById(needToDelRids);
     }
 
     @Override
@@ -44,7 +49,7 @@ public class AdminCommentReplySaveServiceImpl extends HomeCommentReplyServiceImp
 
     @Override
     public void removeReply(Integer id) {
-
+        super.replyRepository.deleteById(id);
     }
 
     @Override
