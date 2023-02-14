@@ -43,6 +43,7 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
         // 请求头中不包含token 放行。若是请求允许的接口，后续security过滤器处理响应；若是后台接口，后续处理器拦截抛出
         if (!StringUtils.hasText(token)) {
             doFilter(request, response, filterChain);
+            return;
         }
         /* 解析jwt 验证有效性 */
         // 获取账户名

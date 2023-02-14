@@ -84,6 +84,7 @@ public class HomeServiceImpl extends AbstractHomeArticleQueryService implements 
         ValidationUtils.pagePramsCheck(index, count);
         IPage<CoreGossip> page = new Page<>(index, count);
         Wrapper<CoreGossip> qw = new LambdaQueryWrapper<CoreGossip>().orderByDesc(CoreGossip::getAddTime);
+
         return this.gossipMapper.selectPage(page, qw).getRecords();
     }
 
