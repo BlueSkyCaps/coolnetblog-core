@@ -17,4 +17,5 @@ public class ElasticSearchConfigProperties {
     private String hostAndPort;
     private String username;
     private String password;
+    private long timeout;
 }

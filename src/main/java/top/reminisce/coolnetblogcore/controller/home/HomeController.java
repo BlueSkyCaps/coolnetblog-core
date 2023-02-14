@@ -43,7 +43,7 @@ public class HomeController {
      */
     @GetMapping({"article"})
     public Result getArticlesFromHome(String from, String keyword, Integer menuId, Integer pageIndex){
-        List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, menuId,
+         List<ArticleSearch> searchArticles = ((HomeServiceImpl) homeService).searchArticles(from, keyword, menuId,
             pageIndex, false);
         return ResultPack.fluent(searchArticles);
     }

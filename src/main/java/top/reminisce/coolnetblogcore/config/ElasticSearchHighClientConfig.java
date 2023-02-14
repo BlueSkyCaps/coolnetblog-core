@@ -27,6 +27,7 @@ public class ElasticSearchHighClientConfig extends AbstractElasticsearchConfigur
         final ClientConfiguration clientConfiguration = ClientConfiguration.builder()
             .connectedTo(elasticSearchConfigProperties.getHostAndPort())
             .withBasicAuth(elasticSearchConfigProperties.getUsername(), elasticSearchConfigProperties.getPassword())
+            .withConnectTimeout(elasticSearchConfigProperties.getTimeout())
             .build();
         return RestClients.create(clientConfiguration).rest();
     }
