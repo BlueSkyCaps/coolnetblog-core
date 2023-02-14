@@ -60,7 +60,7 @@ public class HomeController {
     }
 
     /**
-     * 分页获取获取"闲言碎语"小组件数据
+     * 分页获取"闲言碎语"小组件数据
      * @return Result数据体
      */
     @GetMapping({"gossip/{pageIndex}"})
