@@ -23,7 +23,6 @@ class BlogTests {
     @Autowired
     private GlobalEachNeedData data;
     @Autowired
-
     private HomeController homeController;
     @Test
     void SCOPE_PROTOTYPETest() {

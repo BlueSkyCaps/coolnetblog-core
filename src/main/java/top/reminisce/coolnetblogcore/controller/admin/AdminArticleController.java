@@ -35,7 +35,7 @@ public class AdminArticleController {
     @GetMapping({"article"})
     public Result getArticlesFromAdmin(String from, String keyword, Integer menuId, Integer pageIndex){
         List<ArticleSearch> searchArticles = ((AdminArticleSaveServiceImpl) adminArticleSaveService)
-            .searchArticles(from, keyword, menuId, pageIndex, true);
+            .searchArticles(from, keyword, menuId, pageIndex, true, true);
         return ResultPack.fluent(searchArticles);
     }
 

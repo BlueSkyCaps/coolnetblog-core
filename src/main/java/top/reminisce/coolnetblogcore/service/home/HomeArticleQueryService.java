@@ -32,5 +32,6 @@ public interface HomeArticleQueryService extends BaseService {
      * @param pageIndex 页码
      * @param includeDraft true，包含草稿
      */
-    List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex, boolean includeDraft);
+    List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex,
+                                       boolean includeDraft, boolean includeSpecial);
 }

@@ -7,6 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.query.Criteria;
+import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.util.ObjectUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
@@ -42,33 +45,54 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
 
     @Override
     public List<ArticleSearch> searchArticles(String from, String keyword, Integer menuId, Integer pageIndex,
-                                              boolean includeDraft){
+                                              boolean includeDraft, boolean includeSpecial){
         ValidationUtils.searchArticlePramsCheck(from, keyword, menuId);
         // 从配置中获取设置的每页文章条数
         Integer pageCountValue = super.getSysAdminExcludeSecurity().getSiteSetting().getOnePageCount();
         ValidationUtils.pagePramsCheck(pageIndex, pageCountValue);
         // 开始根据动作来源检索文章数据。从elasticsearch
-        return dealArticlePageDataByFrom(from, keyword, menuId, pageIndex, pageCountValue);
+        return dealArticlePageDataByFrom(from, keyword, menuId, pageIndex, pageCountValue, includeDraft, includeSpecial);
     }
 
     /**
      * 处理文章分页核心方法
      */
     private List<ArticleSearch> dealArticlePageDataByFrom(String from, String keyword, Integer menuId,
-                                                          Integer pageIndex, Integer pageCountValue) {
+                                                          Integer pageIndex, Integer pageCountValue,
+                                                          boolean includeDraft, boolean includeSpecial) {
         List<ArticleSearch> articleSearches = null;
         Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
         Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
+        Criteria criteria = new Criteria();
+        // 包含草稿文章与否
+        if (! includeDraft){
+            criteria.and("isDraft").is(false);
+        }
+        // 包含特殊文章与否
+        if (! includeSpecial){
+            criteria.and("isSpecial").is(false);
+        }
+        /* 开始匹配动作来源： */
         // 不带任何来源的文章分页
         if (ObjectUtils.isEmpty(from)){
-            articleSearches = this.articleSearchRepository.findAll(pageable).getContent();
+            Query query = new CriteriaQuery(criteria);
+            query.setPageable(pageable);
+            articleSearches = this.articleSearchRepository
+                .searchAll(super.beanUtils.getElasticsearchRestTemplate(), query).getSearchHits().stream()
+                .map(SearchHit::getContent).collect(Collectors.toList());
         }
         // 点击检索了某菜单
-        if (from.equals(SEARCH_ACTION_FROM_MENU)){
-            articleSearches = this.articleSearchRepository.findByMenuId(menuId, pageable);
+        if (! ObjectUtils.isEmpty(from) && from.equals(SEARCH_ACTION_FROM_MENU)){
+            // 指定菜单id
+            criteria.and("menuId").is(menuId);
+            Query query = new CriteriaQuery(criteria);
+            query.setPageable(pageable);
+            articleSearches = this.articleSearchRepository
+                .searchAll(super.beanUtils.getElasticsearchRestTemplate(), query).getSearchHits().stream()
+                .map(SearchHit::getContent).collect(Collectors.toList());
         }
         // 点击了搜索框
-        if (from.equals(SEARCH_ACTION_FROM_KEYWORD)){
+        if (! ObjectUtils.isEmpty(from) && from.equals(SEARCH_ACTION_FROM_KEYWORD)){
             articleSearches = this.articleSearchRepository.fuzzinessSearch(super.beanUtils.getElasticsearchRestTemplate(),
                 keyword, pageable).getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
         }

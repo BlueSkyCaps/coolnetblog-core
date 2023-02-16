@@ -40,6 +40,15 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
             throw new BlogException("要插入的文章文档必须不为null！");
         }
     }
+
+    /**
+     * 通用搜索，按条件进行搜索<br>
+     * @return 列表
+     */
+    default SearchHits<ArticleSearch> searchAll(ElasticsearchRestTemplate template, Query q){
+        return template.search(q, ArticleSearch.class, IndexCoordinates.of(ARTICLE_SEARCH_INDEX_NAME));
+    }
+
     /**
      * 获取属于MenuId的文章列表，采用分页。<br>
      * 约束仓储

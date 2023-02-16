@@ -59,4 +59,7 @@ public class ArticleSearch {
 
     @Field(type = FieldType.Boolean, index = false)
     private Boolean isSpecial;
+
+    @Field(type = FieldType.Boolean, index = false)
+    private Boolean isDraft;
 }

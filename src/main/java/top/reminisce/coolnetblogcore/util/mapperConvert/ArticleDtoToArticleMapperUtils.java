@@ -2,7 +2,6 @@ package top.reminisce.coolnetblogcore.util.mapperConvert;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import top.reminisce.coolnetblogcore.pojo.ao.elastic.ArticleSearch;
 import top.reminisce.coolnetblogcore.pojo.dto.ArticleDto;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreArticle;
 

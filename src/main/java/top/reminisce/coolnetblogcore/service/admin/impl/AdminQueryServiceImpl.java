@@ -68,7 +68,7 @@ public class AdminQueryServiceImpl extends AbstractAdminService implements Admin
      * @return 包含草稿的文章，分页
      */
     public List<ArticleSearch> searchArticlesIncludeAll(String from, String keyword, Integer menuId, Integer pageIndex,
-                                              boolean includeDraft){
-        return this.articleQueryService.searchArticles(from, keyword, menuId, pageIndex, includeDraft);
+                                              boolean includeDraft, boolean includeSpecial){
+        return this.articleQueryService.searchArticles(from, keyword, menuId, pageIndex, includeDraft, includeSpecial);
     }
 }
