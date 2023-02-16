@@ -66,11 +66,11 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         Criteria criteria = new Criteria();
         // 包含草稿文章与否
         if (! includeDraft){
-            criteria.and("isDraft").is(false);
+            criteria.and(new Criteria("isDraft").is(false));
         }
         // 包含特殊文章与否
         if (! includeSpecial){
-            criteria.and("isSpecial").is(false);
+            criteria.and(new Criteria("isSpecial").is(false));
         }
         /* 开始匹配动作来源： */
         // 不带任何来源的文章分页

@@ -1,5 +1,6 @@
 package top.reminisce.coolnetblogcore.handler;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -13,6 +14,8 @@ import top.reminisce.coolnetblogcore.common.ResultStatus;
 import top.reminisce.coolnetblogcore.handler.exception.BlogAccountNotRightExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.vo.Result;
 import top.reminisce.coolnetblogcore.service.BlogExceptionService;
+
+import java.util.Arrays;
 
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
@@ -33,11 +36,7 @@ public class BlogExceptionController {
     @ExceptionHandler(value = {Exception.class})
     @ResponseBody
     public Result handler(Throwable throwable){
-        ResultStatus status = exceptionService.determineExceptionKinds(throwable);
-        if (status == ResultStatus.OTHER) {
-            return ResultPack.reject(throwable.getMessage());
-        }
-        return ResultPack.error(throwable.getMessage());
+        return getResult(throwable);
     }
 
 
@@ -51,11 +50,18 @@ public class BlogExceptionController {
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Result handlerAuthentication(Throwable throwable){
+        return getResult(throwable);
+    }
+
+    @NotNull
+    private Result getResult(Throwable throwable) {
         ResultStatus status = exceptionService.determineExceptionKinds(throwable);
         if (status == ResultStatus.OTHER) {
-            return ResultPack.reject(throwable.getMessage());
+            return ResultPack.reject(throwable.getMessage()+ "详细堆栈："+
+                System.lineSeparator()+ Arrays.toString(throwable.getStackTrace()));
         }
-        return ResultPack.error(throwable.getMessage());
+        return ResultPack.error(throwable.getMessage()+ "详细堆栈："+
+            System.lineSeparator()+Arrays.toString(throwable.getStackTrace()));
     }
 
 }

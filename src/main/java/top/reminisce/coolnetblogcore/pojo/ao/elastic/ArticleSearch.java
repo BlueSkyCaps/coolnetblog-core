@@ -36,7 +36,7 @@ public class ArticleSearch {
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String content;
 
-    @Field(type = FieldType.Boolean, index = false)
+    @Field(type = FieldType.Boolean)
     private Boolean isShowTitle;
 
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
@@ -48,7 +48,7 @@ public class ArticleSearch {
     @Field(type = FieldType.Date, pattern = "uuuu-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    @Field(type = FieldType.Boolean, index = false)
+    @Field(type = FieldType.Boolean)
     private Boolean isLock;
 
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
@@ -57,9 +57,9 @@ public class ArticleSearch {
     @Field(type = FieldType.Keyword)
     private String custUri;
 
-    @Field(type = FieldType.Boolean, index = false)
+    @Field(type = FieldType.Boolean)
     private Boolean isSpecial;
 
-    @Field(type = FieldType.Boolean, index = false)
+    @Field(type = FieldType.Boolean)
     private Boolean isDraft;
 }
