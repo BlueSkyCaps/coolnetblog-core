@@ -63,19 +63,19 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         List<ArticleSearch> articleSearches = null;
         Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
         Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
-        Criteria criteria = new Criteria();
+        Criteria whereCriteria = new Criteria();
         // 包含草稿文章与否
         if (! includeDraft){
-            criteria.and(new Criteria("isDraft").is(false));
+            whereCriteria.and(new Criteria("isDraft").is(false));
         }
         // 包含特殊文章与否
         if (! includeSpecial){
-            criteria.and(new Criteria("isSpecial").is(false));
+            whereCriteria.and(new Criteria("isSpecial").is(false));
         }
         /* 开始匹配动作来源： */
         // 不带任何来源的文章分页
         if (ObjectUtils.isEmpty(from)){
-            Query query = new CriteriaQuery(criteria);
+            Query query = new CriteriaQuery(whereCriteria);
             query.setPageable(pageable);
             articleSearches = this.articleSearchRepository
                 .searchAll(super.beanUtils.getElasticsearchRestTemplate(), query).getSearchHits().stream()
@@ -84,8 +84,8 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         // 点击检索了某菜单
         if (! ObjectUtils.isEmpty(from) && from.equals(SEARCH_ACTION_FROM_MENU)){
             // 指定菜单id
-            criteria.and("menuId").is(menuId);
-            Query query = new CriteriaQuery(criteria);
+            whereCriteria.and(new Criteria("menuId").is(menuId));
+            Query query = new CriteriaQuery(whereCriteria);
             query.setPageable(pageable);
             articleSearches = this.articleSearchRepository
                 .searchAll(super.beanUtils.getElasticsearchRestTemplate(), query).getSearchHits().stream()
@@ -94,7 +94,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         // 点击了搜索框
         if (! ObjectUtils.isEmpty(from) && from.equals(SEARCH_ACTION_FROM_KEYWORD)){
             articleSearches = this.articleSearchRepository.fuzzinessSearch(super.beanUtils.getElasticsearchRestTemplate(),
-                keyword, pageable).getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
+                keyword, pageable, includeDraft, includeSpecial).getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
         }
         return articleSearches;
     }

@@ -1,6 +1,8 @@
 package top.reminisce.coolnetblogcore.repository.elastic;
 
 import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Pageable;
@@ -8,10 +10,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.IndexQuery;
-import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.util.ObjectUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
@@ -111,19 +110,32 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
 
     /**
      * 关键词搜索文章
-     * @param template ElasticsearchRestTemplate
-     * @param queryText 关键词文本
-     * @param pageable 分页对象
+     *
+     * @param template      ElasticsearchRestTemplate
+     * @param queryText     关键词文本
+     * @param pageable      分页对象
      * @return SearchHits，搜索后封装的结果
      */
-    default SearchHits<ArticleSearch> fuzzinessSearch(ElasticsearchRestTemplate template, String queryText, Pageable pageable) {
+    default SearchHits<ArticleSearch> fuzzinessSearch(ElasticsearchRestTemplate template, String queryText,
+                                                      Pageable pageable, boolean includeDraft, boolean includeSpecial) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        if (! includeDraft){
+            boolQueryBuilder.must(QueryBuilders.matchBoolPrefixQuery("isDraft", false));
+
+        }
+        if (! includeSpecial){
+            boolQueryBuilder.must(QueryBuilders.matchBoolPrefixQuery("isSpecial", false));
+        }
+
         QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(queryText, ARTICLE_SEARCH_ABLE_FIELD_NAMES)
             .fuzziness(Fuzziness.AUTO);
 
         Query q = new NativeSearchQueryBuilder()
             .withFilter(queryBuilder)
+            .withQuery(queryBuilder)
             .withPageable(pageable)
             .build();
+
         return template.search(q, ArticleSearch.class, IndexCoordinates.of(ARTICLE_SEARCH_INDEX_NAME));
     }
 }
