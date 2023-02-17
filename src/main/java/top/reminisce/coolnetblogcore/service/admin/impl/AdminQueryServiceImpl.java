@@ -58,6 +58,7 @@ public class AdminQueryServiceImpl extends AbstractAdminService implements Admin
     public List<CoreArticle> getAllViewAbleArticles() {
         Wrapper<CoreArticle> qw = new LambdaQueryWrapper<CoreArticle>()
             .eq(CoreArticle::getIsDraft, false)
+            .eq(CoreArticle::getIsSpecial, false)
             .orderByDesc(CoreArticle::getUpdateTime);
         return this.articleMapper.selectList(qw);
     }

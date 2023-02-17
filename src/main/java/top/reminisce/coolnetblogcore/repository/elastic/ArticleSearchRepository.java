@@ -109,30 +109,31 @@ public interface ArticleSearchRepository extends ElasticsearchRepository<Article
     }
 
     /**
-     * 关键词搜索文章
+     * 分词 模糊查询 搜索文章，并且设置是否包含草稿和特殊文章。
      *
      * @param template      ElasticsearchRestTemplate
-     * @param queryText     关键词文本
+     * @param queryText     文本
      * @param pageable      分页对象
      * @return SearchHits，搜索后封装的结果
      */
     default SearchHits<ArticleSearch> fuzzinessSearch(ElasticsearchRestTemplate template, String queryText,
                                                       Pageable pageable, boolean includeDraft, boolean includeSpecial) {
+        // 构建boolQuery，用于过滤草稿或特殊文章
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         if (! includeDraft){
-            boolQueryBuilder.must(QueryBuilders.matchBoolPrefixQuery("isDraft", false));
-
+            boolQueryBuilder.filter(QueryBuilders.termQuery("isDraft", false));
         }
         if (! includeSpecial){
-            boolQueryBuilder.must(QueryBuilders.matchBoolPrefixQuery("isSpecial", false));
+            boolQueryBuilder.filter(QueryBuilders.termQuery("isSpecial", false));
         }
 
-        QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(queryText, ARTICLE_SEARCH_ABLE_FIELD_NAMES)
-            .fuzziness(Fuzziness.AUTO);
+        // 构建multiMatchQuery来对全文（内容、标题等）进行分词检索 fuzziness编辑距离为0 但Operator.OR默认只要有一个分词被匹配即可
+        QueryBuilder matchQueryBuilder = QueryBuilders.multiMatchQuery(queryText, ARTICLE_SEARCH_ABLE_FIELD_NAMES)
+            .fuzziness(Fuzziness.ZERO).operator(Operator.OR);
 
         Query q = new NativeSearchQueryBuilder()
-            .withFilter(queryBuilder)
-            .withQuery(queryBuilder)
+            .withFilter(boolQueryBuilder)
+            .withQuery(matchQueryBuilder)
             .withPageable(pageable)
             .build();
 

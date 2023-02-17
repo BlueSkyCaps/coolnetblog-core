@@ -40,7 +40,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
      * Article数据访问层 -> sql based
      */
     @Autowired
-    protected ArticleMapper articleMapper;
+    public ArticleMapper articleMapper;
 
 
     @Override
@@ -61,8 +61,15 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
                                                           Integer pageIndex, Integer pageCountValue,
                                                           boolean includeDraft, boolean includeSpecial) {
         List<ArticleSearch> articleSearches = null;
-        Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
-        Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
+        // 分页对象用于点击了搜索框 最靠前的是最匹配的，不按某个字段排序
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageCountValue);
+        // 点击了搜索框
+        if (! ObjectUtils.isEmpty(from) && from.equals(SEARCH_ACTION_FROM_KEYWORD)){
+            articleSearches = this.articleSearchRepository.fuzzinessSearch(super.beanUtils.getElasticsearchRestTemplate(),
+                keyword, pageable, includeDraft, includeSpecial).getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
+            return articleSearches;
+        }
+
         Criteria whereCriteria = new Criteria();
         // 包含草稿文章与否
         if (! includeDraft){
@@ -72,7 +79,9 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
         if (! includeSpecial){
             whereCriteria.and(new Criteria("isSpecial").is(false));
         }
-        /* 开始匹配动作来源： */
+        // 重新赋值page 因为要按updateTime排序
+        Sort sort = Sort.by(Sort.Direction.DESC, "updateTime");
+        pageable = PageRequest.of(pageIndex - 1, pageCountValue, sort);
         // 不带任何来源的文章分页
         if (ObjectUtils.isEmpty(from)){
             Query query = new CriteriaQuery(whereCriteria);
@@ -91,11 +100,7 @@ public abstract class AbstractHomeArticleQueryService extends AbstractHomeQueryS
                 .searchAll(super.beanUtils.getElasticsearchRestTemplate(), query).getSearchHits().stream()
                 .map(SearchHit::getContent).collect(Collectors.toList());
         }
-        // 点击了搜索框
-        if (! ObjectUtils.isEmpty(from) && from.equals(SEARCH_ACTION_FROM_KEYWORD)){
-            articleSearches = this.articleSearchRepository.fuzzinessSearch(super.beanUtils.getElasticsearchRestTemplate(),
-                keyword, pageable, includeDraft, includeSpecial).getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
-        }
+
         return articleSearches;
     }
 
