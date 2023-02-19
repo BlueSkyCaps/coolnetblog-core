@@ -24,13 +24,8 @@ import java.util.List;
  */
 @Configuration
 public class MongoConfig {
-    private final ApplicationContext context;
     @Autowired
     private MongoDatabaseFactory mongoDatabaseFactory;
-
-    public MongoConfig(ApplicationContext context) {
-        this.context = context;
-    }
 
 
     /**
@@ -39,7 +34,6 @@ public class MongoConfig {
      * @return MongoCustomConversions自定义转换对象
      * @note 此MongoCustomConversions对象必须为bean，否则mongoTemplate.setCustomConversions方法添加抛出convert等异常
      */
-    //
     @Bean
     public MongoCustomConversions customConversions() {
         List<Converter<?,?>> converters = new ArrayList<>();
@@ -57,7 +51,7 @@ public class MongoConfig {
         // MongoTemplate mongoTemplate = context.getBean(MongoTemplate.class);
         MappingMongoConverter mongoMapping = (MappingMongoConverter) mongoTemplate.getConverter();
         mongoMapping.setCustomConversions(customConversions());
-        // 最终调用，否则无法成功添加
+        // 最终调用，否则无法成功添加自定义转换器
         mongoMapping.afterPropertiesSet();
         return mongoTemplate;
 
