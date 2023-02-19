@@ -1,12 +1,12 @@
 package top.reminisce.coolnetblogcore.pojo.po.mongo;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -29,6 +29,7 @@ public class CoreComment implements Serializable {
     private String email;
     private String content;
     private boolean isPassed;
+    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date commentTime;
     private boolean isAdmin;
     private String clientIp;
