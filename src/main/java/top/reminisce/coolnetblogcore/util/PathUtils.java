@@ -27,6 +27,7 @@ public class PathUtils {
         }
     };
     private static final String DOT_ = ",";
+    private static final String[] LOCAL_ADDR_ = new String[]{"0:0:0:0:0:0:0:1", "127.0.0.1", "localhost"};
 
     /**
      * 根据请求上下文获取客户端源ip地址
@@ -45,13 +46,26 @@ public class PathUtils {
         ip = request.getHeader("X-Forwarded-For");
         if (! ObjectUtils.isEmpty(ip)){
             if (ip.contains(DOT_)){
-                ip = ip.split(",")[0];
+                ip = ip.split(DOT_)[0];
+                return ip;
             }
         }
+
+        ip = request.getHeader("WL-Proxy-Client-IP");
+        if (! ObjectUtils.isEmpty(ip)){
+            return ip;
+        }
+        ip = request.getHeader("Proxy-Client-IP");
+        if (! ObjectUtils.isEmpty(ip)){
+            return ip;
+        }
+        ip = request.getRemoteAddr();
         if (ObjectUtils.isEmpty(ip)){
             // log.info("处理客户端发出的请求ip：当前上下文请求获取的ip为null");
             throw new BlogException("处理客户端发出的请求ip：当前上下文请求获取的ip为null");
         }
+        if (ip.equals(LOCAL_ADDR_[0]) || ip.equals(LOCAL_ADDR_[1]))
+            ip = LOCAL_ADDR_[2];
         return ip;
     }
     public static String getRealPath(HttpServletRequest request, String ref) {

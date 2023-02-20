@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
  * @date 2022/10/2
  */
 
-public interface ReplyRepository extends MongoRepository<CoreReply, Integer>, BaseMongoTemplateRepository {
+public interface ReplyRepository extends MongoRepository<CoreReply, String>, BaseMongoTemplateRepository {
     /**
      * 获取指定评论id获取关联回复，使用分页
      * @param commentId 评论id
      * @param pageable 分页对象
      * @return 分页获取到的回复列表
      */
-    List<CoreReply> findByCommentId(Integer commentId, Pageable pageable);
+    List<CoreReply> findByCommentId(String commentId, Pageable pageable);
     /**
      * 根据提供的评论id范围，获取相关的所有回复id<br>
      * 基于mongodb中的查找文档 $in 运算符<br>
@@ -37,7 +37,7 @@ public interface ReplyRepository extends MongoRepository<CoreReply, Integer>, Ba
      * @param cids     要查找范围的评论id列表
      * @return 属于评论范围的回复id，列表
      */
-    default List<Integer> finRidBasedRelatedCommentIdsIn(MongoTemplate template, List<Integer> cids) {
+    default List<String> finRidBasedRelatedCommentIdsIn(MongoTemplate template, List<String> cids) {
         if (template==null){
             throw new BlogException("MongoTemplate对象不得为空！");
         }

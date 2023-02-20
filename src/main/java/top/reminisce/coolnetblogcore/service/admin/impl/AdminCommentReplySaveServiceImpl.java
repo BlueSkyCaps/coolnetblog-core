@@ -32,10 +32,10 @@ public class AdminCommentReplySaveServiceImpl extends HomeCommentReplyServiceImp
     }
 
     @Override
-    public void removeComment(Integer id) {
+    public void removeComment(String id) {
         super.commentRepository.deleteById(id);
         // 根据评论删关联回复
-        List<Integer> needToDelRids = super.replyRepository
+        List<String> needToDelRids = super.replyRepository
             .finRidBasedRelatedCommentIdsIn(super.beanUtils.getMongoTemplate(), Collections.singletonList(id));
         super.replyRepository.deleteAllById(needToDelRids);
     }
@@ -46,7 +46,7 @@ public class AdminCommentReplySaveServiceImpl extends HomeCommentReplyServiceImp
     }
 
     @Override
-    public void removeReply(Integer id) {
+    public void removeReply(String id) {
         super.replyRepository.deleteById(id);
     }
 
@@ -59,14 +59,14 @@ public class AdminCommentReplySaveServiceImpl extends HomeCommentReplyServiceImp
         query.fields().include("id");
         List<?> data = super.commentRepository
             .conditionWhereFindData(super.beanUtils.getMongoTemplate(), query, CoreComment.class);
-        List<Integer> needToDelCids = data.stream().map(c->((CoreComment)c).getId()).collect(Collectors.toList());
+        List<String> needToDelCids = data.stream().map(c->((CoreComment)c).getId()).collect(Collectors.toList());
         if (ObjectUtils.isEmpty(needToDelCids)){
             return;
         }
         // 删关联评论
         super.commentRepository.deleteAllById(needToDelCids);
         // 根据评论继续删关联回复
-        List<Integer> needToDelRids = super.replyRepository.finRidBasedRelatedCommentIdsIn(super.beanUtils.getMongoTemplate(), needToDelCids);
+        List<String> needToDelRids = super.replyRepository.finRidBasedRelatedCommentIdsIn(super.beanUtils.getMongoTemplate(), needToDelCids);
         super.replyRepository.deleteAllById(needToDelRids);
     }
 }

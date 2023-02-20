@@ -29,7 +29,6 @@ import top.reminisce.coolnetblogcore.util.mapperConvert.ReplyAddDtoToReplyMapper
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 前台评论回复实现类 用于获取评论、用户留言，但不包括删除的实现。删除操作请见实现类
@@ -51,13 +50,15 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
 
     /**
      * 初始化待插入的评论实体逻辑
+     *
      * @param comment 评论实体<br>
-     * comment.sourceId 评论的来源内容id，比如文章id<br>
-     * comment.sourceType 评论的来源内容类型，比如文章
+     *                comment.sourceId 评论的来源内容id，比如文章id<br>
+     *                comment.sourceType 评论的来源内容类型，比如文章
+     * @param ip 当前请求的客户端ip，已被解析
      * @return 评论的来源内容数据，如文章实体
      */
-    private Object initSourceAddCommentLogic(CoreComment comment){
-        Object source = null;
+    private Object initSourceAddCommentLogic(CoreComment comment, String ip){
+        Object source;
         comment.setPassed(true);
         source = initSourceExistLogic(comment.getSourceId(), comment.getSourceType());
         if (comment.getSourceType()==1){
@@ -68,20 +69,24 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
                 comment.setPassed(false);
             }
         }
+        comment.setClientIp(ip);
         packCommentEntity(comment);
         return source;
     }
 
     /**
      * 初始化待插入的回复实体逻辑
+     *
      * @param reply 回复实体<br>
-     * comment.commentId 回复的评论id<br>
+     *              comment.commentId 回复的评论id<br>
+     * @param ip
      * @return 回复的最上方来源内容数据，如文章实体
      */
-    private Object initSourceAddReplyLogic(CoreReply reply){
-        Object source = null;
+    private Object initSourceAddReplyLogic(CoreReply reply, String ip){
+        Object source;
         reply.setPassed(true);
-        Integer relatedCid = reply.getCommentId();
+        reply.setClientIp(ip);
+        String relatedCid = reply.getCommentId();
         // 检查关联的评论
         CoreComment relatedComment = commentRepository.findById(relatedCid).orElse(null);
         if (relatedComment == null) {
@@ -154,7 +159,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
     }
 
     @Override
-    public List<CoreReply> getRepliesByCommentIdBasedSlide(Integer commentId, Integer index, Integer count) {
+    public List<CoreReply> getRepliesByCommentIdBasedSlide(String commentId, Integer index, Integer count) {
         Sort sort = Sort.by(Sort.Direction.DESC, "replyTime");
         Pageable pageable = PageRequest.of(index - 1, 10, sort);
         return replyRepository.findByCommentId(commentId, pageable);
@@ -162,45 +167,50 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
 
     @Override
     public CoreComment addCommentPackProcessor(CommentAddDto commentAddDto, HttpServletRequest request) {
-        leaveLimitCountCheck(request);
+        String ip = leaveLimitCountCheck(request);
         CoreComment comment = CommentAddDtoToCommentMapperUtils.INSTANCE.commentAddDtoToComment(commentAddDto);
-        initSourceAddCommentLogic(comment);
+        initSourceAddCommentLogic(comment, ip);
         return this.commentRepository.save(comment);
     }
 
     @Override
     public CoreReply addReplyPackProcessor(ReplyAddDto replyAddDto, HttpServletRequest request) {
-        leaveLimitCountCheck(request);
+        String ip = leaveLimitCountCheck(request);
         CoreReply reply = ReplyAddDtoToReplyMapperUtils.INSTANCE.replyAddDtoToReply(replyAddDto);
-        initSourceAddReplyLogic(reply);
+        initSourceAddReplyLogic(reply, ip);
         return this.replyRepository.save(reply);
     }
 
     /**
      * 检查当前客户端ip当日的评论回复数是否超过设置的每日限制数
      */
-    private void leaveLimitCountCheck(HttpServletRequest request){
+    private String leaveLimitCountCheck(HttpServletRequest request){
         CoreSysAdmin coreSysAdmin = super.getSysAdminExcludeSecurity();
         Integer leaveLimitCount = coreSysAdmin.getSiteSetting().getLeaveLimitCount();
-        if (leaveLimitCount==null || leaveLimitCount<=0){
-            return;
-        }
         String ip = PathUtils.getClientSourceIp(request);
+        if (leaveLimitCount==null || leaveLimitCount<=0){
+            return ip;
+        }
         Date nowDate;
         nowDate = TimeUtils.dateExcludeTime(TimeUtils.currentDateTime());
         Date nextDate = TimeUtils.dateTimeOffsetDay(nowDate, 1);
-        CriteriaDefinition criteria = new Criteria()
-            .and("clientIp").is(ip)
-            .and("commentTime").gt(nowDate)
-            .and("commentTime").lt(nextDate);
+        CriteriaDefinition criteria = new Criteria().and("clientIp").is(ip)
+            .andOperator(
+                Criteria.where("commentTime").gt(nowDate),
+                Criteria.where("commentTime").lt(nextDate)
+            );
+
         Integer cCount = this.commentRepository.conditionWhereCount(super.beanUtils.getMongoTemplate(), criteria, CoreComment.class);
-        criteria = new Criteria()
-            .and("clientIp").is(ip)
-            .and("replyTime").gt(nowDate)
-            .and("replyTime").lt(nextDate);
+        criteria = new Criteria().and("clientIp").is(ip)
+            .andOperator(
+                Criteria.where("replyTime").gt(nowDate),
+                Criteria.where("replyTime").lt(nextDate)
+            );
         Integer rCount = this.replyRepository.conditionWhereCount(super.beanUtils.getMongoTemplate(), criteria, CoreReply.class);
-        if (cCount+rCount>leaveLimitCount) {
+        if (cCount+rCount >= leaveLimitCount) {
             throw new BlogLeaveLimitExceptionTips("当日留言次数已用完，请第二日再来哦，谢谢！");
         }
+
+        return ip;
     }
 }

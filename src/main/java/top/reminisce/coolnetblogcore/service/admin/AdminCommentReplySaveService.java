@@ -23,7 +23,7 @@ public interface AdminCommentReplySaveService extends BaseService {
      * 删除某条评论及其所有回复
      * @param id 评论id
      */
-    void removeComment(Integer id);
+    void removeComment(String id);
 
     /**
      * 后台管理员新增回复
@@ -35,7 +35,7 @@ public interface AdminCommentReplySaveService extends BaseService {
      * 删除某条回复
      * @param id 回复id
      */
-    void removeReply(Integer id);
+    void removeReply(String id);
 
     /**
      * 删除某内容（文章）的所有关联评论以及评论关联的所有回复。<br/>

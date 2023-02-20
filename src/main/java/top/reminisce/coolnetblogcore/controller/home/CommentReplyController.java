@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import top.reminisce.coolnetblogcore.common.ResultPack;
@@ -44,7 +45,7 @@ public class CommentReplyController {
      */
     @GetMapping({"source/{sourceType}/{sourceId}/comment"})
     public Result getComments(@PathVariable Integer sourceId, @PathVariable Integer sourceType, @NotNull Integer pageIndex,
-                              @Value("10") Integer commentCount, @Value("10") Integer replyCount){
+                              @DefaultValue("10") Integer commentCount, @DefaultValue("10") Integer replyCount){
         List<CoreComment> commentsCarryRepliesByArticleIdBasedSlide = homeCommentReplyService
             .getCommentsCarryRepliesBySourceIdBasedSlide(sourceId, sourceType, pageIndex, commentCount, replyCount);
         return ResultPack.fluent(commentsCarryRepliesByArticleIdBasedSlide);

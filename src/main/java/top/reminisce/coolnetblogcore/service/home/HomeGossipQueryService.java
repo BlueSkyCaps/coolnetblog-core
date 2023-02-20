@@ -1,6 +1,7 @@
 package top.reminisce.coolnetblogcore.service.home;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import top.reminisce.coolnetblogcore.pojo.po.sql.CoreGossip;
 import top.reminisce.coolnetblogcore.service.BaseService;
 
@@ -15,5 +16,5 @@ public interface HomeGossipQueryService extends BaseService {
     /**
      * 根据分页获取，"闲言碎语"组件数据
      */
-    List<CoreGossip> getGossipBySlide(@NotNull Integer index,  @Value("10") Integer count);
+    List<CoreGossip> getGossipBySlide(@NotNull Integer index,  @DefaultValue("10") Integer count);
 }

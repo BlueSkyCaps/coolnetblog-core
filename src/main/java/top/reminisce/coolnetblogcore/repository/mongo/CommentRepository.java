@@ -17,7 +17,7 @@ import java.util.Objects;
  * @date 2022/10/2
  */
 
-public interface CommentRepository extends MongoRepository<CoreComment, Integer>, BaseMongoTemplateRepository {
+public interface CommentRepository extends MongoRepository<CoreComment, String>, BaseMongoTemplateRepository {
     /**
      * 获取指定原内容id的评论，使用分页
      *

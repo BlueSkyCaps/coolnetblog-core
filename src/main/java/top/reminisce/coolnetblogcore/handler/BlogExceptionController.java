@@ -2,7 +2,6 @@ package top.reminisce.coolnetblogcore.handler;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,8 +13,6 @@ import top.reminisce.coolnetblogcore.common.ResultStatus;
 import top.reminisce.coolnetblogcore.handler.exception.BlogAccountNotRightExceptionTips;
 import top.reminisce.coolnetblogcore.pojo.vo.Result;
 import top.reminisce.coolnetblogcore.service.BlogExceptionService;
-
-import java.util.Arrays;
 
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
@@ -57,11 +54,9 @@ public class BlogExceptionController {
     private Result getResult(Throwable throwable) {
         ResultStatus status = exceptionService.determineExceptionKinds(throwable);
         if (status == ResultStatus.OTHER) {
-            return ResultPack.reject(throwable.getMessage()+ "详细堆栈："+
-                System.lineSeparator()+ Arrays.toString(throwable.getStackTrace()));
+            return ResultPack.reject(throwable.getMessage(), null,throwable.getStackTrace());
         }
-        return ResultPack.error(throwable.getMessage()+ "详细堆栈："+
-            System.lineSeparator()+Arrays.toString(throwable.getStackTrace()));
+        return ResultPack.error(throwable.getMessage(), null, throwable.getStackTrace());
     }
 
 }

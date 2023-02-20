@@ -6,7 +6,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,7 +22,7 @@ import java.util.List;
 @Setter
 public class CoreComment implements Serializable {
     @Id
-    private Integer id;
+    private String id;
     private Integer sourceId;
     private Integer sourceType;
     private String name;
@@ -29,7 +30,7 @@ public class CoreComment implements Serializable {
     private String email;
     private String content;
     private boolean isPassed;
-    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date commentTime;
     private boolean isAdmin;
     private String clientIp;
