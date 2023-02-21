@@ -22,7 +22,7 @@ import java.util.Date;
 @NotNull
 public class ReplyAddDto {
     @NotNull(message = "前台错误传递：回复的原评论id不得为空")
-    private Integer commentId;
+    private String commentId;
     @NotEmpty(message = "别忘记输入昵称~")
     @Size(min = 2, max = 20, message = "昵称大于2字符小于20字符哦~")
     private String name;

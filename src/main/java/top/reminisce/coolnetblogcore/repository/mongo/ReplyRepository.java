@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public interface ReplyRepository extends MongoRepository<CoreReply, String>, BaseMongoTemplateRepository {
     /**
-     * 获取指定评论id获取关联回复，使用分页
+     * 根据指定评论id获取关联回复，使用分页
      * @param commentId 评论id
      * @param pageable 分页对象
      * @return 分页获取到的回复列表

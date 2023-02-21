@@ -29,6 +29,10 @@ public class CoreReply implements Serializable {
     private String content;
     private boolean isPassed;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    /*
+    * 设置时间格式，返回前端东八区北京时间。mongodb存储时间date为ISO，java实体获取按本地时间处理，
+    因此内部仍是正确的本地时间（东八区）。但返回json时，仍会显示ISO格式，所以指定此@JsonFormat
+    *  */
     private Date replyTime;
     private boolean isAdmin;
     private String clientIp;

@@ -1,6 +1,5 @@
 package top.reminisce.coolnetblogcore.service.home;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import top.reminisce.coolnetblogcore.pojo.dto.CommentAddDto;
 import top.reminisce.coolnetblogcore.pojo.dto.ReplyAddDto;
@@ -33,14 +32,14 @@ public interface HomeCommentReplyService {
      */
     List<CoreReply> getAllRepliesByCommentId(@NotNull Integer commentId);
 
-
     /**
      * 根据评论id获取关联回复，使用分页
      * @param commentId 评论id
      * @param index 回复页码
      * @param count 每页回复数
      */
-    List<CoreReply> getRepliesByCommentIdBasedSlide(@NotNull String commentId, @NotNull Integer index, @DefaultValue("10") Integer count);
+    List<CoreReply> getRepliesByCommentIdBasedSlide(@NotNull String commentId, @NotNull Integer index,
+                                                    @DefaultValue("10") Integer count);
 
     /**
      * 新增评论处理

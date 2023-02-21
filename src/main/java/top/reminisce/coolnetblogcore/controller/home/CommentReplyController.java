@@ -52,6 +52,21 @@ public class CommentReplyController {
     }
 
     /**
+     * 根据评论id获取回复，分页
+     * @param commentId id
+     * @param pageIndex 分页页码
+     * @param replyCount 每页回复数
+     * @return Result数据体 回复的列表
+     */
+    @GetMapping({"comment/{commentId}/reply"})
+    public Result getRepliesByCommentId(@PathVariable String commentId, @NotNull Integer pageIndex,
+                                        @DefaultValue("10") Integer replyCount){
+        List<CoreReply> repliesByCommentIdBasedSlide = homeCommentReplyService
+            .getRepliesByCommentIdBasedSlide(commentId, pageIndex, replyCount);
+        return ResultPack.fluent(repliesByCommentIdBasedSlide);
+    }
+
+    /**
      * 为内容新增评论
      * @param commentAdd 前端评论数据
      * @param request 请求体对象

@@ -158,10 +158,11 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
         throw new NotImplementedException();
     }
 
+
     @Override
     public List<CoreReply> getRepliesByCommentIdBasedSlide(String commentId, Integer index, Integer count) {
         Sort sort = Sort.by(Sort.Direction.DESC, "replyTime");
-        Pageable pageable = PageRequest.of(index - 1, 10, sort);
+        Pageable pageable = PageRequest.of(index - 1, count, sort);
         return replyRepository.findByCommentId(commentId, pageable);
     }
 
