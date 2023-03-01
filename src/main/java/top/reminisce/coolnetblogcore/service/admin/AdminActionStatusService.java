@@ -12,25 +12,19 @@ import top.reminisce.coolnetblogcore.service.BaseService;
  */
 public interface AdminActionStatusService extends BaseService {
     /**
-     * 登录操作
+     * 登录操作 当前用户
      * @return
      */
     Object loginAction(LoginDto loginDto);
     /**
-     *注销操作
+     *注销操作 当前用户
+     * 根据当前请求上下文注销当前请求线程SecurityContext中存储的当前用户
      * @return
      */
-    @Deprecated
-    default Object logoutAction(){return null;}
+     Object logoutAction();
 
     /**
-     *注销操作
-     * @return
-     */
-    Object logoutAction(LoginDto loginDto);
-
-    /**
-     * 重置密码操作
+     * 重置密码操作 当前用户
      * @return
      */
     Object resetAction(ResetPasswordDto resetPasswordDto);
