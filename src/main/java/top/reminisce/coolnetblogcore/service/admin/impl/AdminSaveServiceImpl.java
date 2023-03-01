@@ -62,7 +62,7 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
     @Transactional(rollbackFor = RuntimeException.class)
     public CoreMenu saveMenuWheel(MenuDto menuDto) {
         CoreMenu menu = MenuDtoToMenuMapperUtils.INSTANCE.menuDtoToMenu(menuDto);
-        if (Objects.isNull(menu.getId()) && menu.getId() > 0) {
+        if (! Objects.isNull(menu.getId()) && menu.getId() > 0) {
             return updateMenu(menu);
         }
         return addMenu(menu);

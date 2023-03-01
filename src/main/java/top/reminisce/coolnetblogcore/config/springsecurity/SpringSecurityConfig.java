@@ -3,8 +3,8 @@ package top.reminisce.coolnetblogcore.config.springsecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -58,7 +58,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/admin/login").anonymous().and()
             .authorizeRequests().antMatchers("/admin/**").authenticated().and()
-            .authorizeRequests().antMatchers("/**").permitAll();
+            .authorizeRequests().antMatchers("/**").permitAll().and()
+            .exceptionHandling().accessDeniedHandler((a, b, c)->b.setStatus(HttpStatus.UNAUTHORIZED.value()));
         // 将自定义JWT认证过滤器添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationPreferentialFilter, UsernamePasswordAuthenticationFilter.class);
     }

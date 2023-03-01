@@ -20,7 +20,15 @@ public interface AdminActionStatusService extends BaseService {
      *注销操作
      * @return
      */
-    Object logoutAction();
+    @Deprecated
+    default Object logoutAction(){return null;}
+
+    /**
+     *注销操作
+     * @return
+     */
+    Object logoutAction(LoginDto loginDto);
+
     /**
      * 重置密码操作
      * @return

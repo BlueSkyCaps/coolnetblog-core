@@ -7,7 +7,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.common.TimestampOffsetActually;
 import top.reminisce.coolnetblogcore.config.springsecurity.LoginUserInfo;
@@ -69,21 +68,37 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
     }
 
 
-    @Override
+/*     @Override
     public Object logoutAction() {
         // 从当前SecurityContext获取当前的用户信息
         LoginUserInfo principal = (LoginUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         // 添加到缓存中 表示此用户已经注销 后续请求即使使用有效的token，仍需要重新登录
         this.stringRedisTemplate.opsForSet().add(REDIS_LOGOUT_KEY_NAME, principal.getUsername());
         return true;
+    } */
+
+    @Override
+    public Object logoutAction(LoginDto loginDto) {
+        // 添加到缓存中 表示此用户已经注销 后续请求即使使用有效的token，仍需要重新登录
+        this.stringRedisTemplate.opsForSet().add(REDIS_LOGOUT_KEY_NAME, loginDto.getAccountName());
+        return true;
     }
 
     @Override
     public Object resetAction(ResetPasswordDto resetPasswordDto) {
-        CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl)(this.adminQueryService)).getSysAdmin(resetPasswordDto.getAccountName());
+        CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl)(this.adminQueryService))
+            .getSysAdmin(resetPasswordDto.getAccountName());
+        if (Objects.isNull(sysAdmin)){
+            // 没有此原账户名
+            throw new BlogAccountNotRightExceptionTips(ACCOUNT_USER_INVALID_TIPS);
+        }
+        if (! SecurityPasswordUtils.passwordMatch(resetPasswordDto.getPassword(), sysAdmin.getPassword())){
+            // 原密码错误
+            throw new BlogAccountNotRightExceptionTips(ACCOUNT_USER_INVALID_TIPS);
+        }
         // 设置新的账户名和密码
         sysAdmin.setAccountName(resetPasswordDto.getNewAccountName());
-        String genNewPassword = SecurityPasswordUtils.genBcryptPassword(resetPasswordDto.getPassword());
+        String genNewPassword = SecurityPasswordUtils.genBcryptPassword(resetPasswordDto.getNewPassword());
         sysAdmin.setPassword(genNewPassword);
         // 调用admin服务层进行最终保存
         this.adminSaveService.saveSysAdmin(sysAdmin);
