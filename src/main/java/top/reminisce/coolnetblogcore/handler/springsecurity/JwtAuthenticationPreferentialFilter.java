@@ -50,13 +50,15 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
         String accountName;
         try {
             accountName = JwtUtils.parseToken(JwtUtils.AVAILABLE_JWT_SECRET_KEY, token).getBody().getId();
-        } catch (Exception e) {
-            throw new BlogAccountNotRightExceptionTips(ACCOUNT_TOKEN_INVALID_TIPS);
+        } catch (RuntimeException e) {
+            extracted(request, ACCOUNT_TOKEN_INVALID_TIPS, response);
+            return;
         }
         // 从缓存中查找当前账户是否已经注销过，注销需要再次登陆验证
         Boolean logout = this.stringRedisTemplate.opsForSet().isMember(REDIS_LOGOUT_KEY_NAME, accountName);
         if (Boolean.TRUE.equals(logout)){
-            throw new BlogAccountNotRightExceptionTips(ACCOUNT_LOGOUT_NOT_AT_TIPS);
+            extracted(request, ACCOUNT_LOGOUT_NOT_AT_TIPS, response);
+            return;
         }
         // 从缓存中获取配置
         CoreSysAdmin sysAdmin = ((AdminQueryServiceImpl) adminQueryService).getSysAdmin(accountName);
@@ -68,5 +70,22 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
         * 便于后续过滤器或请求方法获取（如登出操作时、执行具体接口方法需要获取当前上下文用户数据时..）
         *  */
         SecurityContextHolder.getContext().setAuthentication(authenticated);
+        super.doFilter(request, response, filterChain);
+    }
+
+    /**
+     *
+     * 封装异常到当前请求，转发传递给控制器层捕获抛出，避免全局捕获异常@ControllerAdvice无法在filter层有用
+     * @param request
+     * @param accountTokenInvalidTips
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    private static void extracted(@NotNull HttpServletRequest request, String accountTokenInvalidTips, @NotNull HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute(EXCEPTION_IN_FILTER_FORWARD_ATTRIBUTE,
+            new BlogAccountNotRightExceptionTips(accountTokenInvalidTips));
+        // 转发传递给指定控制器
+        request.getRequestDispatcher("/forward/exception-in-filter").forward(request, response);
     }
 }

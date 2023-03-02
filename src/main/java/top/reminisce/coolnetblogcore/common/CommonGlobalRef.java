@@ -19,6 +19,7 @@ public class CommonGlobalRef {
     public static final String ACCOUNT_LOGOUT_NOT_AT_TIPS = "身份拒绝：注销后，请重新登录。";
     public static final String SEARCH_ACTION_FROM_MENU = "menu";
     public static final String SEARCH_ACTION_FROM_KEYWORD = "keyword";
+    public static final String EXCEPTION_IN_FILTER_FORWARD_ATTRIBUTE = "top.reminisce.coolnetblogcore.exception-in-filter";
     /**
      * 前台网页查询文章的来源动作：
      * menu 点击检索了某菜单

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.util.PathUtils;
+import top.reminisce.coolnetblogcore.util.SecurityPasswordUtils;
 import top.reminisce.coolnetblogcore.util.TextStringUtils;
 import top.reminisce.coolnetblogcore.util.TimeUtils;
 
@@ -69,5 +70,20 @@ public class CommonTest {
                 .collect(Collectors.toList());
             System.out.println(Strings.join(strings, TextStringUtils.SPACE_VALUE));
         }
+    }
+
+    @Test
+    void genBcryptPasswordTest(){
+
+        String bcryptPassword = SecurityPasswordUtils.genBcryptPassword("123456");
+        System.out.printf(bcryptPassword);
+    }
+
+    @Test
+    void passwordMatchTest(){
+        boolean bcryptPassword = SecurityPasswordUtils.passwordMatch("123456",
+            "$2a$10$.vLMro8QM3CxdOpvMN9DEeesZk10vc87BqUreNbH1njX9R8K.b6im");
+        System.out.printf(String.valueOf(bcryptPassword));
+
     }
 }

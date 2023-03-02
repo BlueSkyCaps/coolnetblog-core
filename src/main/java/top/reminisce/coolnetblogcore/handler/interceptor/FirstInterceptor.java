@@ -1,3 +1,4 @@
+/*
 package top.reminisce.coolnetblogcore.handler.interceptor;
 
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -6,9 +7,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+*/
 /**
  * @author BlueSkyCarry
- */
+ *//*
+
 public class FirstInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         System.out.println("FirstInterceptor preHandle 控制器之前执行");
@@ -23,3 +26,4 @@ public class FirstInterceptor implements HandlerInterceptor {
         System.out.println("FirstInterceptor afterCompletion 响应数据后 请求结束后执行");
     }
 }
+*/
