@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -48,14 +49,28 @@ public class SpringBeanUtils {
      * 获取RestHighLevelClient bean
      */
     public RestHighLevelClient getElasticsearchRestHighClient(){
-        return context.getBean(RestHighLevelClient.class);
+        RestHighLevelClient restHighLevelClient = context.getBean(RestHighLevelClient.class);
+        return restHighLevelClient;
     }
 
     /**
      * 获取ElasticsearchRestTemplate bean
      */
     public ElasticsearchRestTemplate getElasticsearchRestTemplate(){
-        return context.getBean(ElasticsearchRestTemplate.class);
+        return new ElasticsearchRestTemplate(getElasticsearchRestHighClient()) {
+            @NotNull
+            @Override
+            public <T> T execute(@NotNull ClientCallback<T> callback) {
+                try {
+                    return super.execute(callback);
+                } catch (DataAccessResourceFailureException e) {
+                    // 重写execute，空闲时间连接出现长时间连接异常时，重新尝试回调结果返回，避免抛出异常
+                    System.out.println("DataAccessResourceFailureException in ElasticsearchRestTemplate retry");
+                    return super.execute(callback);
+                }
+            }
+        };
+
     }
 
     /**

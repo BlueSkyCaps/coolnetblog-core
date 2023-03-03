@@ -13,6 +13,7 @@ import top.reminisce.coolnetblogcore.util.TimeUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -84,6 +85,11 @@ public class CommonTest {
         boolean bcryptPassword = SecurityPasswordUtils.passwordMatch("123456",
             "$2a$10$.vLMro8QM3CxdOpvMN9DEeesZk10vc87BqUreNbH1njX9R8K.b6im");
         System.out.printf(String.valueOf(bcryptPassword));
+    }
 
+    @Test
+    void durationTest(){
+        Duration ofMillis = Duration.ofMillis(1000);
+        System.out.printf(ofMillis.toString());
     }
 }
