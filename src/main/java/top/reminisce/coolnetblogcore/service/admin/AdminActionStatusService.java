@@ -2,7 +2,6 @@ package top.reminisce.coolnetblogcore.service.admin;
 
 import top.reminisce.coolnetblogcore.pojo.dto.LoginDto;
 import top.reminisce.coolnetblogcore.pojo.dto.ResetPasswordDto;
-import top.reminisce.coolnetblogcore.pojo.po.mongo.CoreSysAdmin;
 import top.reminisce.coolnetblogcore.service.BaseService;
 
 /**
@@ -21,7 +20,7 @@ public interface AdminActionStatusService extends BaseService {
      * 根据当前请求上下文注销当前请求线程SecurityContext中存储的当前用户
      * @return
      */
-     Object logoutAction();
+    Object logoutAction();
 
     /**
      * 重置密码操作 当前用户

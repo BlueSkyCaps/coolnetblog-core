@@ -98,8 +98,9 @@ public class AdminActionStatusServiceImpl implements AdminActionStatusService {
         sysAdmin.setPassword(genNewPassword);
         // 调用admin服务层进行最终保存
         this.adminSaveService.saveSysAdmin(sysAdmin);
-        // 保存成功 主动注销
-        this.logoutAction();
+
+        // 添加到缓存中 表示此 原用户 已经注销，后续请求即使用有效的token，仍需要重新登录
+        this.stringRedisTemplate.opsForSet().add(REDIS_LOGOUT_KEY_NAME, resetPasswordDto.getAccountName());
         return true;
     }
 }

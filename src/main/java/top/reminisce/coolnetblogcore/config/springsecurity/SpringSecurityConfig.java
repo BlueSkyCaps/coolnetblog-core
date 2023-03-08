@@ -57,7 +57,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         * 其余前台接口任何人皆可请求
         */
         http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers("/admin/login").anonymous().and()
+            .authorizeRequests().antMatchers("/admin/login", "/admin/reset").anonymous().and()
             .authorizeRequests().antMatchers("/admin/**").authenticated().and()
             .authorizeRequests().antMatchers("/**").permitAll();
         // 配置403权限错误 捕获返回全局的异常响应体。此SimpleAccessDeniedEntryPoint身份验证入口点重写默认的Http403ForbiddenEntryPoint
