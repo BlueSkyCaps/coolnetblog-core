@@ -1,4 +1,4 @@
-package top.reminisce.coolnetblogcore.service.home.impl;
+package top.reminisce.coolnetblogcore.service.impl;
 
 import org.springframework.stereotype.Service;
 import top.reminisce.coolnetblogcore.common.ResultStatus;

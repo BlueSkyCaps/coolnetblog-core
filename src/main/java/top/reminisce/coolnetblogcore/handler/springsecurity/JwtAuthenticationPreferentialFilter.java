@@ -40,24 +40,30 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("token");
-        // 请求头中不包含token 放行。若是请求允许的接口，后续security过滤器处理响应；若是后台接口，后续处理器拦截抛出
-        if (! StringUtils.hasText(token)) {
-            super.doFilter(request, response, filterChain);
+        try {
+            // 请求头中不包含token 放行。若是请求允许的接口，后续security过滤器处理响应；若是后台接口，后续处理器拦截抛出
+            if (! StringUtils.hasText(token)) {
+                super.doFilter(request, response, filterChain);
+                return;
+            }
+        } catch (Exception e) {
+            extractedExceptionDispatcher(request, ACCOUNT_TOKEN_NULL_TIPS, response);
             return;
         }
+
         /* 解析jwt 验证有效性 */
         // 获取账户名
         String accountName;
         try {
             accountName = JwtUtils.parseToken(JwtUtils.AVAILABLE_JWT_SECRET_KEY, token).getBody().getId();
         } catch (RuntimeException e) {
-            extracted(request, ACCOUNT_TOKEN_INVALID_TIPS, response);
+            extractedExceptionDispatcher(request, ACCOUNT_TOKEN_INVALID_TIPS, response);
             return;
         }
         // 从缓存中查找当前账户是否已经注销过，注销需要再次登陆验证
         Boolean logout = this.stringRedisTemplate.opsForSet().isMember(REDIS_LOGOUT_KEY_NAME, accountName);
         if (Boolean.TRUE.equals(logout)){
-            extracted(request, ACCOUNT_LOGOUT_NOT_AT_TIPS, response);
+            extractedExceptionDispatcher(request, ACCOUNT_LOGOUT_NOT_AT_TIPS, response);
             return;
         }
         // 根据账户获取配置
@@ -82,7 +88,8 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
      * @throws ServletException
      * @throws IOException
      */
-    private static void extracted(@NotNull HttpServletRequest request, String accountTokenInvalidTips, @NotNull HttpServletResponse response) throws ServletException, IOException {
+    static void extractedExceptionDispatcher(@NotNull HttpServletRequest request, String accountTokenInvalidTips,
+                                             @NotNull HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute(EXCEPTION_IN_FILTER_FORWARD_ATTRIBUTE,
             new BlogAccountNotRightExceptionTips(accountTokenInvalidTips));
         // 转发传递给指定控制器

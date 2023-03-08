@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,7 +53,7 @@ public class BlogExceptionHandler {
     @ExceptionHandler(value = {org.springframework.web.bind.MethodArgumentNotValidException.class})
     @ResponseBody
     public Result handlerPostNotValidException(Throwable throwable, BindingResult bindingResult){
-        String errValidMsg = distinguish(bindingResult);
+        String errValidMsg = validationDistinguish(bindingResult);
         return getResult(new Throwable(errValidMsg, throwable));
     }
 
@@ -83,7 +84,7 @@ public class BlogExceptionHandler {
      * @param bindingResult validation验证无效封装的结果
      * @return 连接到的错误信息字符串
      */
-    private String distinguish(BindingResult bindingResult) {
+    private String validationDistinguish(BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
             List<ObjectError> errors = bindingResult.getAllErrors();
             StringBuilder sb = new StringBuilder();

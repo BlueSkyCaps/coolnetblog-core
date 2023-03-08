@@ -1,5 +1,6 @@
 package top.reminisce.coolnetblogcore.config.springsecurity;
 
+import org.elasticsearch.core.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +13,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import top.reminisce.coolnetblogcore.handler.springsecurity.JwtAuthenticationPreferentialFilter;
+import top.reminisce.coolnetblogcore.handler.springsecurity.SimpleAccessDeniedEntryPoint;
+import top.reminisce.coolnetblogcore.handler.springsecurity.SimpleAccessDeniedHandler;
+
+import java.util.Arrays;
 
 /**
  * 用于设置Spring Security相关的配置类
@@ -43,6 +51,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/static/**");
     }
 
+
     /**
      * 通常用于 配置允许放行的请求接口，以及过滤器链
      */
@@ -58,8 +67,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/admin/login").anonymous().and()
             .authorizeRequests().antMatchers("/admin/**").authenticated().and()
-            .authorizeRequests().antMatchers("/**").permitAll().and()
-            .exceptionHandling().accessDeniedHandler((a, b, c)->b.setStatus(HttpStatus.UNAUTHORIZED.value()));
+            .authorizeRequests().antMatchers("/**").permitAll();
+        // 配置403权限错误 捕获返回全局的异常响应体。此SimpleAccessDeniedEntryPoint身份验证入口点重写默认的Http403ForbiddenEntryPoint
+        http.exceptionHandling()
+            .authenticationEntryPoint(new SimpleAccessDeniedEntryPoint());
         // 将自定义JWT认证过滤器添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationPreferentialFilter, UsernamePasswordAuthenticationFilter.class);
     }
@@ -72,5 +83,4 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
-
 }
