@@ -88,8 +88,8 @@ public class JwtAuthenticationPreferentialFilter extends OncePerRequestFilter {
      * @throws ServletException
      * @throws IOException
      */
-    static void extractedExceptionDispatcher(@NotNull HttpServletRequest request, String accountTokenInvalidTips,
-                                             @NotNull HttpServletResponse response) throws ServletException, IOException {
+    public static void extractedExceptionDispatcher(@NotNull HttpServletRequest request, String accountTokenInvalidTips,
+                                                    @NotNull HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute(EXCEPTION_IN_FILTER_FORWARD_ATTRIBUTE,
             new BlogAccountNotRightExceptionTips(accountTokenInvalidTips));
         // 转发传递给指定控制器

@@ -14,7 +14,8 @@ import static top.reminisce.coolnetblogcore.handler.springsecurity.JwtAuthentica
 /**
  * 重写Http403ForbiddenEntryPoint，用于Spring Security中配置authenticationEntryPoint的handler。<br/>
  * Spring Security拒绝未经验证的uri访问，并返回Access denied结果。此结果位于Spring Security过滤器链中
- * 返回，因此尚未达到Controller层无法被自定义全局异常捕获。重写commence方法，转发给控制器用于返回全局自定义响应体。
+ * 返回，因此尚未达到Controller层无法被自定义全局异常捕获。重写commence方法，转发给控制器用于返回全局自定义响应体。<br/><br/>
+ * <i>此handler在需要验证的接口请求时第一时间进行验证，验证失败将抛出403进行返回自定义响应<i/>
  * @author BlueSky
  * @date 2023/3/8
  */

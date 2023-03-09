@@ -3,6 +3,7 @@ package top.reminisce.coolnetblogcore.config.springsecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -10,9 +11,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import top.reminisce.coolnetblogcore.handler.springsecurity.JwtAuthenticationPreferentialFilter;
 import top.reminisce.coolnetblogcore.handler.springsecurity.SimpleAccessDeniedEntryPoint;
+import top.reminisce.coolnetblogcore.handler.springsecurity.SimpleAccessDeniedHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static top.reminisce.coolnetblogcore.common.CommonGlobalRef.ACCOUNT_TOKEN_NULL_TIPS;
+import static top.reminisce.coolnetblogcore.handler.springsecurity.JwtAuthenticationPreferentialFilter.extractedExceptionDispatcher;
 
 /**
  * 用于设置Spring Security相关的配置类
@@ -60,8 +71,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests().antMatchers("/admin/login", "/admin/reset").anonymous().and()
             .authorizeRequests().antMatchers("/admin/**").authenticated().and()
             .authorizeRequests().antMatchers("/**").permitAll();
-        // 配置403权限错误 捕获返回全局的异常响应体。此SimpleAccessDeniedEntryPoint身份验证入口点重写默认的Http403ForbiddenEntryPoint
+        /*
+        * 配置403权限错误 捕获返回全局的异常响应体。
+        * 此SimpleAccessDeniedHandler实现AccessDeniedHandler接口
+        * 此SimpleAccessDeniedEntryPoint身份验证入口点重写默认的Http403ForbiddenEntryPoint
+        *  */
         http.exceptionHandling()
+            .accessDeniedHandler(new SimpleAccessDeniedHandler())
             .authenticationEntryPoint(new SimpleAccessDeniedEntryPoint());
         // 将自定义JWT认证过滤器添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationPreferentialFilter, UsernamePasswordAuthenticationFilter.class);
