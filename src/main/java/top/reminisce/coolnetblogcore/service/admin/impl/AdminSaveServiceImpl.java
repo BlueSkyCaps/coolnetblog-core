@@ -160,6 +160,9 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
     @Transactional(rollbackFor = RuntimeException.class)
     @Override
     public void removeGossip(Integer id) {
+        if (Objects.isNull(super.gossipMapper.selectById(id))) {
+            throw new BlogNotExistExceptionTips("删除的项已不存在。");
+        }
         super.gossipMapper.deleteById(id);
     }
 
@@ -250,6 +253,7 @@ public class AdminSaveServiceImpl extends AdminQueryServiceImpl implements Admin
         if (Objects.isNull(super.loveLookMapper.selectById(id))) {
             throw new BlogNotExistExceptionTips("删除的链接已不存在。");
         }
+        super.loveLookMapper.deleteById(id);
     }
 }
   
