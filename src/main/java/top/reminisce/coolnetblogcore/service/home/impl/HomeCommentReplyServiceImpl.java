@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import top.reminisce.coolnetblogcore.handler.exception.BlogException;
 import top.reminisce.coolnetblogcore.handler.exception.BlogLeaveLimitExceptionTips;
 import top.reminisce.coolnetblogcore.handler.exception.BlogNotExistExceptionTips;
@@ -155,7 +154,7 @@ public class HomeCommentReplyServiceImpl extends AbstractHomeArticleQueryService
 
     @Override
     public List<CoreReply> getAllRepliesByCommentId(Integer commentId) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 

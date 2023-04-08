@@ -30,9 +30,6 @@ public class Result {
         this.stackTrace = stackTrace;
     }
 
-
-
-
     public String getMessage() {
         return message;
     }
